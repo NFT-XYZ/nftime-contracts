@@ -33,7 +33,7 @@ contract NFTIME is Ownable, ERC721URIStorage, ERC721Enumerable, ERC721Burnable {
     }
 
     function mint(uint256 _time) public payable returns (uint256) {
-        require(msg.value >= 0.01 ether, "Not enough ETH sent, check price");
+        require(msg.value == 0.01 ether, "Not enough ETH sent, check price");
 
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
@@ -44,7 +44,7 @@ contract NFTIME is Ownable, ERC721URIStorage, ERC721Enumerable, ERC721Burnable {
 
         require(mintedTimes[date] == false, "Time has already been minted!");
 
-        _safeMint(msg.sender, newItemId);
+        _mint(msg.sender, newItemId);
 
         mintedTimes[date] = true;
         tokenIdToTime[newItemId] = date;

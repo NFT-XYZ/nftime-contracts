@@ -8,7 +8,19 @@ import "./DateTime.sol";
 contract Renderer {
     function render(Date memory date) public pure returns (string memory) {
         return
-            string.concat(renderDayAttributes(date), renderClockAttributes());
+            string.concat(
+                prepareSVGStyle(),
+                renderDayAttributes(date),
+                renderClockAttributes()
+            );
+    }
+
+    function prepareSVGStyle() internal pure returns (string memory) {
+        return
+            string.concat(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" style="background:#000">',
+                "<defs><style>.container {height: 100%; display:flex; align-items:center; justify-content:center;} p {color:white; margin:0;}</style></defs>"
+            );
     }
 
     function renderDayAttributes(Date memory date)
@@ -18,46 +30,22 @@ contract Renderer {
     {
         return
             string.concat(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" style="background:#000">',
                 getSVGPath("M0 0h1000.8v1000.8H0z"),
-                getDayAttribute(":", "126", "-3", "translate(726.23 651.28)"),
-                getDayAttribute(
-                    date.hour,
-                    "142.0683",
-                    "-1",
-                    "translate(549.32 672.21)"
-                ),
-                getDayAttribute(
-                    date.minute,
-                    "142.0683",
-                    "0",
-                    "translate(772.86 674.12)"
-                ),
+                getDayAttribute(":", "126", "200", "40", "720", "520"),
+                getDayAttribute(date.hour, "142", "200", "200", "520", "520"),
+                getDayAttribute(date.minute, "142", "200", "200", "760", "520"),
                 getDayAttribute(
                     date.dayOfWeek,
-                    "138.449",
-                    "0",
-                    "translate(593.16 912.63)"
+                    "138",
+                    "200",
+                    "440",
+                    "520",
+                    "760"
                 ),
-                getDayAttribute(
-                    date.year,
-                    "142.0683",
-                    "0",
-                    "translate(574.35 193.89)"
-                ),
-                getDayAttribute(
-                    date.month,
-                    "142.0683",
-                    "-1",
-                    "translate(613.28 433.04)"
-                ),
-                getDayAttribute(
-                    date.day,
-                    "360",
-                    "-9",
-                    "translate(56.167 396.88)"
-                ),
-                getDayAttribute(date.day, "11", "0", "translate(334.17 744.08)")
+                getDayAttribute(date.year, "142", "200", "440", "520", "40"),
+                getDayAttribute(date.month, "142", "200", "440", "520", "280"),
+                getDayAttribute(date.day, "360", "440", "440", "40", "40"),
+                getDayAttribute(date.day, "11", "20", "20", "334", "730")
             );
     }
 
@@ -111,22 +99,30 @@ contract Renderer {
     function getDayAttribute(
         string memory attribute,
         string memory fontSize,
-        string memory letterSpacing,
-        string memory transform
+        string memory height,
+        string memory width,
+        string memory transformX,
+        string memory transformY
     ) internal pure returns (string memory) {
         return
-            svg.text(
-                string.concat(
-                    svg.prop("font-size", fontSize),
-                    svg.prop(
-                        "font-family",
-                        "HelveticaNowDisplayBd, sans-serif"
-                    ),
-                    svg.prop("letter-spacing", letterSpacing),
-                    svg.prop("transform", transform),
-                    svg.prop("fill", "white")
-                ),
-                svg.cdata(attribute)
+            string.concat(
+                '<foreignObject x="',
+                transformX,
+                '" y="',
+                transformY,
+                '" height="',
+                height,
+                '" width="',
+                width,
+                '">',
+                '<div class="container" xmlns="http://www.w3.org/1999/xhtml">',
+                '<p style="font-size: ',
+                fontSize,
+                'px;">',
+                attribute,
+                "</p>"
+                "</div>",
+                "</foreignObject>"
             );
     }
 
