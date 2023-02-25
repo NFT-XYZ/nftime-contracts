@@ -13,7 +13,12 @@ contract CounterScript is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         Renderer renderer = new Renderer();
-        new NFTIME(address(renderer), msg.sender);
+        NFTIME nftime = new NFTIME(
+            address(renderer),
+            0x94B2ceA71F9bA7A6e55c40bE320033D1151145B6
+        );
+
+        nftime.mint{value: 0.01 ether}(1893495600);
 
         vm.stopBroadcast();
     }

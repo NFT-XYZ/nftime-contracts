@@ -97,7 +97,9 @@ contract NFTIME is
                                 '{"name":"',
                                 name,
                                 '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
-                                '"attributes": [{"trait_type": "coolness", "value": 100}], "image":"',
+                                '"attributes": ',
+                                getAttributes(date),
+                                ', "image":"',
                                 svgToImageURI(renderer.render(date)),
                                 '"}'
                             )
@@ -107,8 +109,49 @@ contract NFTIME is
             );
     }
 
+    function contractURI() public pure returns (string memory) {
+        return "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
+    }
+
     function _baseURI() internal pure override returns (string memory) {
         return "data:application/json;base64,";
+    }
+
+    function getAttributes(Date memory date)
+        internal
+        pure
+        returns (string memory)
+    {
+        return
+            string.concat(
+                "[",
+                concatAttribute("year", date.year),
+                ",",
+                concatAttribute("month", date.month),
+                ",",
+                concatAttribute("day", date.day),
+                ",",
+                concatAttribute("hour", date.hour),
+                ",",
+                concatAttribute("minute", date.minute),
+                "]"
+            );
+    }
+
+    function concatAttribute(string memory label, string memory attribute)
+        internal
+        pure
+        returns (string memory)
+    {
+        return
+            string.concat(
+                "{",
+                '"trait_type": "',
+                label,
+                '", "value": "',
+                attribute,
+                '"}'
+            );
     }
 
     function svgToImageURI(string memory _svg)
