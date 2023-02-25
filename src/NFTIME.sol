@@ -2,16 +2,25 @@
 pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
 import "./utils/DateTime.sol";
 import "./utils/Renderer.sol";
 
-contract NFTIME is Ownable, ERC721URIStorage, ERC721Enumerable, ERC721Burnable {
+contract NFTIME is
+    Ownable,
+    AccessControl,
+    ERC721URIStorage,
+    ERC721Enumerable,
+    ERC721Pausable,
+    ERC721Burnable
+{
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -28,11 +37,17 @@ contract NFTIME is Ownable, ERC721URIStorage, ERC721Enumerable, ERC721Burnable {
     // 1 -> [year:'2030',month:'JAN',day:'01',hour:'11',minute:'00']
     mapping(uint256 => Date) public tokenIdToTimeStruct;
 
-    constructor(address _renderer) ERC721("NFTIME", "TIME") {
+    constructor(address _renderer, address _multisig) ERC721("NFTIME", "TIME") {
+        _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
         renderer = Renderer(_renderer);
     }
 
-    function mint(uint256 _time) public payable returns (uint256) {
+    function mint(uint256 _time)
+        public
+        payable
+        whenNotPaused
+        returns (uint256)
+    {
         require(msg.value == 0.01 ether, "Not enough ETH sent, check price");
 
         _tokenIds.increment();
@@ -92,19 +107,8 @@ contract NFTIME is Ownable, ERC721URIStorage, ERC721Enumerable, ERC721Burnable {
             );
     }
 
-    function contractURI() public pure returns (string memory) {
-        return "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
-    }
-
     function _baseURI() internal pure override returns (string memory) {
         return "data:application/json;base64,";
-    }
-
-    function _burn(uint256 _tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-    {
-        super._burn(_tokenId);
     }
 
     function svgToImageURI(string memory _svg)
@@ -119,11 +123,29 @@ contract NFTIME is Ownable, ERC721URIStorage, ERC721Enumerable, ERC721Burnable {
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
 
-    function setRenderer(Renderer _renderer) external onlyOwner {
+    function setRenderer(Renderer _renderer)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         renderer = _renderer;
     }
 
-    function withdraw() public payable onlyOwner {
+    function setDefaultAdminRole(address _multisig)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
+    }
+
+    function pauseTransactions() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause();
+    }
+
+    function resumeTransactions() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _unpause();
+    }
+
+    function withdraw() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
         (bool success, ) = payable(msg.sender).call{
             value: address(this).balance
         }("");
@@ -136,15 +158,23 @@ contract NFTIME is Ownable, ERC721URIStorage, ERC721Enumerable, ERC721Burnable {
         address to,
         uint256 firstTokenId,
         uint256 batchSize
-    ) internal override(ERC721, ERC721Enumerable) {
+    ) internal override(ERC721, ERC721Enumerable, ERC721Pausable) {
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
+    }
+
+    function _burn(uint256 _tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+        whenNotPaused
+    {
+        super._burn(_tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
         public
         view
         virtual
-        override(ERC721, ERC721Enumerable)
+        override(AccessControl, ERC721, ERC721Enumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

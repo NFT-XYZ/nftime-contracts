@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2018 The Officious BokkyPooBah / Bok Consulting Pty Ltd
-// Copyright (c) 2022 NFTXYZ Added & Modified Functions
+// Copyright (c) 2022 NFTXYZ (Olivier Winkler) Added & Modified Functions
 
 pragma solidity ^0.8.16;
 
@@ -47,7 +47,7 @@ contract DateTime {
         return
             string.concat(
                 _date.day,
-                ".",
+                " ",
                 _date.month,
                 " ",
                 _date.year,
@@ -129,6 +129,6 @@ contract DateTime {
         if (_month == 9) return "SEP";
         if (_month == 10) return "OCT";
         if (_month == 11) return "NOV";
-        if (_month == 12) return "DEZ";
+        if (_month == 12) return "DEC";
     }
 }
