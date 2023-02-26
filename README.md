@@ -8,8 +8,8 @@ Consolidate ```.env.local``` fill out ```.env```
 
 | Contract      | Network | Contract address |
 | ------------- | ------- | ---------------- |
-| Dispatcher    | ?       | not deployed yet |
-| MembershipNFT | goerli      | 0x5853261EAfbBC8d685647F5837c566097953628b |
+| Renderer    | ?       | not deployed yet |
+| NFTIME | goerli      |  |
 
 ### Deploy contracts
 
@@ -20,7 +20,7 @@ source .env
 forge script script/<scriptname>.s.sol:<contractname> --rpc-url goerli || mainnet --broadcast
 
 # concatenate the following if you want to verify the contract
-# --verify --etherscan-api-key $ETHERSCAN_API_KEY -vvvv
+# --verify -vvvvv
 
 ```
 
