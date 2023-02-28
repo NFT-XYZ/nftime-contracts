@@ -71,7 +71,8 @@ contract Renderer {
                             string.concat(
                                 svg.prop("cx", "118.9"),
                                 svg.prop("cy", "-3.2"),
-                                svg.prop("r", "8.8")
+                                svg.prop("r", "8.8"),
+                                svg.prop("fill", "white")
                             ),
                             ""
                         ),
