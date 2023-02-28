@@ -11,7 +11,7 @@ contract Renderer {
             string.concat(
                 prepareSVGStyle(),
                 renderDayAttributes(date),
-                renderClockAttributes()
+                renderClockAttributes(date)
             );
     }
 
@@ -19,7 +19,11 @@ contract Renderer {
         return
             string.concat(
                 '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" style="background:#000">',
-                '<defs><style>@font-face{font-family:"HelveticaNowDisplayMd"; src:url("https://nftime.vercel.app/_next/static/media/HelveticaNowDisplayMd.e2e7c552.woff2");} .container {height: 100%; display:flex; align-items:center; justify-content:center;} p {font-family:"HelveticaNowDisplayMd"; color:white; margin:0;}</style></defs>'
+                '<defs><style>@font-face{font-family:"HelveticaNowDisplayMd"; src:url("https://nftime.vercel.app/_next/static/media/HelveticaNowDisplayMd.e2e7c552.woff2");} .container {height: 100%; display:flex; align-items:center; justify-content:center;} p {font-family:"HelveticaNowDisplayMd"; color:white; margin:0;}',
+                "@keyframes rotation {from {transform: rotate(0deg);} to {transform: rotate(360deg);}}",
+                "#hand-s-use {animation: rotation 60s linear infinite;}",
+                "</style>",
+                "</defs>"
             );
     }
 
@@ -42,14 +46,25 @@ contract Renderer {
                     "520",
                     "760"
                 ),
-                getDayAttribute(date.year, "142", "200", "440", "520", "40"),
+                getDayAttribute(
+                    Strings.toString(date.year),
+                    "142",
+                    "200",
+                    "440",
+                    "520",
+                    "40"
+                ),
                 getDayAttribute(date.month, "142", "200", "440", "520", "280"),
                 getDayAttribute(date.day, "360", "440", "440", "40", "40"),
                 getDayAttribute(date.day, "11", "20", "20", "330", "730")
             );
     }
 
-    function renderClockAttributes() internal pure returns (string memory) {
+    function renderClockAttributes(Date memory date)
+        internal
+        pure
+        returns (string memory)
+    {
         return
             string.concat(
                 getSVGPath(
@@ -76,22 +91,9 @@ contract Renderer {
                             ),
                             ""
                         ),
-                        getSVGPath(
-                            "M232.3-101.2l3.5-7.3-7.7 2.7L116.8-5.5 121-.9l111.3-100.3z",
-                            true
-                        ),
-                        getSVGPath(
-                            "M33.3-52.6l5.4 6.7L117.4-.5l3.1-5.4-78.7-45.4-8.5-1.3z",
-                            true
-                        ),
-                        getSVGPath(
-                            "M102.058 154.95L118.683-3.277l1.591.167-16.625 158.23z",
-                            true
-                        ),
-                        getSVGPath(
-                            "M120-28.7l-2 25.4 1.6.2 3.3-25.3 1.6-15.5-3-.3-1.5 15.5z",
-                            true
-                        )
+                        getSVGClockPath("M0 0 v 158", date.minuteUint, 6),
+                        getSVGClockPath("M0 0 v 100", date.hourUint, 30),
+                        '<g transform="translate(118.9, -3.2)"><g id="hand-s-use"><path d="M 0,0 l 4,0 0,158 -4, 0" fill="white" /></g></g>'
                     )
                 ),
                 getSVGPath(
@@ -150,5 +152,36 @@ contract Renderer {
                 ),
                 ""
             );
+    }
+
+    function getSVGClockPath(
+        string memory d,
+        uint256 rotation,
+        uint256 product
+    ) internal pure returns (string memory) {
+        string memory style = string.concat(
+            "transform: translate(119px, -3.2px) rotate(",
+            computeRotation(rotation, product),
+            "deg);"
+        );
+
+        return
+            svg.path(
+                string.concat(
+                    svg.prop("stroke", "white"),
+                    svg.prop("stroke-width", "8"),
+                    svg.prop("style", style),
+                    svg.prop("d", d)
+                ),
+                ""
+            );
+    }
+
+    function computeRotation(uint256 rotation, uint256 product)
+        internal
+        pure
+        returns (string memory)
+    {
+        return Strings.toString(180 + (rotation * product));
     }
 }

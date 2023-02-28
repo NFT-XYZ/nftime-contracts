@@ -7,12 +7,14 @@ pragma solidity ^0.8.16;
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 struct Date {
-    string year;
+    uint256 year;
     string month;
     string day;
     string dayOfWeek;
     string hour;
+    uint256 hourUint;
     string minute;
+    uint256 minuteUint;
 }
 
 contract DateTime {
@@ -26,11 +28,9 @@ contract DateTime {
         pure
         returns (Date memory)
     {
-        (
-            string memory year,
-            string memory month,
-            string memory day
-        ) = _daysToDate(_timestamp / SECONDS_PER_DAY);
+        (uint256 year, string memory month, string memory day) = _daysToDate(
+            _timestamp / SECONDS_PER_DAY
+        );
         uint256 secs = _timestamp % SECONDS_PER_DAY;
         uint256 _hour = secs / SECONDS_PER_HOUR;
         secs = secs % SECONDS_PER_HOUR;
@@ -40,7 +40,7 @@ contract DateTime {
         string memory minute = _formatOctalNumbers(_minute);
         string memory dayOfWeek = _getDayOfWeek(_timestamp);
 
-        return Date(year, month, day, dayOfWeek, hour, minute);
+        return Date(year, month, day, dayOfWeek, hour, _hour, minute, _minute);
     }
 
     function formatDate(Date memory _date) public pure returns (string memory) {
@@ -50,7 +50,7 @@ contract DateTime {
                 " ",
                 _date.month,
                 " ",
-                _date.year,
+                Strings.toString(_date.year),
                 " ",
                 _date.hour,
                 ":",
@@ -62,7 +62,7 @@ contract DateTime {
         internal
         pure
         returns (
-            string memory year,
+            uint256 year,
             string memory month,
             string memory day
         )
@@ -80,7 +80,7 @@ contract DateTime {
         _month = _month + 2 - 12 * L;
         _year = 100 * (N - 49) + _year + L;
 
-        year = Strings.toString(uint256(_year));
+        year = uint256(_year);
         month = _getMonthByNumber(uint256(_month));
         day = _formatOctalNumbers(uint256(_day));
     }

@@ -125,7 +125,7 @@ contract NFTIME is
         return
             string.concat(
                 "[",
-                concatAttribute("year", date.year),
+                concatAttribute("year", Strings.toString(date.year)),
                 ",",
                 concatAttribute("month", date.month),
                 ",",
