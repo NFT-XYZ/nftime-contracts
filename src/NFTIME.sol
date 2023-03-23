@@ -29,11 +29,14 @@ contract NFTIME is
     Renderer public renderer;
 
     event Mint(address indexed _address, uint256 _tokenId);
+    event RarityMint(address indexed _address, uint256 _tokenId);
 
     // 01.JAN 2030 12:00 -> true / false
     mapping(string => bool) public mintedTimes;
+
     // 1 -> 01.JAN 2030 12:00
     mapping(uint256 => string) public tokenIdToTime;
+
     // 1 -> [year:'2030',month:'JAN',day:'01',hour:'11',minute:'00']
     mapping(uint256 => Date) public tokenIdToTimeStruct;
 
@@ -42,12 +45,9 @@ contract NFTIME is
         renderer = Renderer(_renderer);
     }
 
-    function mint(uint256 _time)
-        public
-        payable
-        whenNotPaused
-        returns (uint256)
-    {
+    function mint(
+        uint256 _time
+    ) public payable whenNotPaused returns (uint256) {
         require(msg.value == 0.01 ether, "Not enough ETH sent, check price");
 
         _tokenIds.increment();
@@ -72,7 +72,24 @@ contract NFTIME is
         return newItemId;
     }
 
-    function tokenURI(uint256 _tokenId)
+    function rarityMint(
+        string memory _tokenUri
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) returns (uint256) {
+        _tokenIds.increment();
+        uint256 newItemId = _tokenIds.current();
+
+        _mint(msg.sender, newItemId);
+
+        _setTokenURI(newItemId, _tokenUri);
+
+        emit RarityMint(msg.sender, newItemId);
+
+        return newItemId;
+    }
+
+    function tokenURI(
+        uint256 _tokenId
+    )
         public
         view
         virtual
@@ -117,11 +134,9 @@ contract NFTIME is
         return "data:application/json;base64,";
     }
 
-    function getAttributes(Date memory date)
-        internal
-        pure
-        returns (string memory)
-    {
+    function getAttributes(
+        Date memory date
+    ) internal pure returns (string memory) {
         return
             string.concat(
                 "[",
@@ -138,11 +153,10 @@ contract NFTIME is
             );
     }
 
-    function concatAttribute(string memory label, string memory attribute)
-        internal
-        pure
-        returns (string memory)
-    {
+    function concatAttribute(
+        string memory label,
+        string memory attribute
+    ) internal pure returns (string memory) {
         return
             string.concat(
                 "{",
@@ -154,11 +168,9 @@ contract NFTIME is
             );
     }
 
-    function svgToImageURI(string memory _svg)
-        internal
-        pure
-        returns (string memory)
-    {
+    function svgToImageURI(
+        string memory _svg
+    ) internal pure returns (string memory) {
         string memory baseURL = "data:image/svg+xml;base64,";
         string memory svgBase64Encoded = Base64.encode(
             bytes(string(abi.encodePacked(_svg)))
@@ -166,17 +178,15 @@ contract NFTIME is
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
 
-    function setRenderer(Renderer _renderer)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function setRenderer(
+        Renderer _renderer
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         renderer = _renderer;
     }
 
-    function setDefaultAdminRole(address _multisig)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function setDefaultAdminRole(
+        address _multisig
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
     }
 
@@ -205,15 +215,15 @@ contract NFTIME is
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
-    function _burn(uint256 _tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-        whenNotPaused
-    {
+    function _burn(
+        uint256 _tokenId
+    ) internal override(ERC721, ERC721URIStorage) whenNotPaused {
         super._burn(_tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
