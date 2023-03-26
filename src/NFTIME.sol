@@ -73,6 +73,9 @@ contract NFTIME is
     /// @notice 1 -> [year:'2030',month:'JAN',day:'01',hour:'11',minute:'00']
     mapping(uint256 => Date) public tokenIdToTimeStruct;
 
+    /// @notice tokenId -> is rarity?
+    mapping(uint256 => Date) public tokenIdToRarityTimeStruct;
+
     /// @dev Initialize NFTIME Contract, grant DEFAULT_ADMIN_ROLE & set {Renderer}.
     constructor(address _renderer, address _multisig) ERC721("NFTIME", "TIME") {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
@@ -101,7 +104,7 @@ contract NFTIME is
         tokenIdToTime[newItemId] = date;
         tokenIdToTimeStruct[newItemId] = ts;
 
-        _setTokenURI(newItemId, tokenURI(newItemId));
+        _setTokenURI(newItemId, _tokenURI(newItemId));
 
         emit Mint(msg.sender, newItemId);
 
@@ -111,14 +114,17 @@ contract NFTIME is
     /// @dev Mint Rarity NFTIME
     /// @param _tokenUri TokenURI to special rarity NFTIME
     function rarityMint(
-        string memory _tokenUri
-    ) public onlyRole(DEFAULT_ADMIN_ROLE) returns (uint256) {
+        string memory _tokenUri,
+        Date memory date
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
 
         _mint(msg.sender, newItemId);
 
-        _setTokenURI(newItemId, _tokenUri);
+        tokenIdToRarityTimeStruct[newItemId] = date;
+
+        _setTokenURI(newItemId, _rarityTokenURI(newItemId, _tokenUri));
 
         emit RarityMint(msg.sender, newItemId);
 
@@ -127,15 +133,7 @@ contract NFTIME is
 
     /// @dev Render the JSON Metadata for a given NFTIME.
     /// @param _tokenId The id of the token to render.
-    function tokenURI(
-        uint256 _tokenId
-    )
-        public
-        view
-        virtual
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
+    function _tokenURI(uint256 _tokenId) public view returns (string memory) {
         require(
             _exists(_tokenId),
             "ERC721Metadata: URI query for nonexistent token"
@@ -147,7 +145,6 @@ contract NFTIME is
         return
             string(
                 abi.encodePacked(
-                    _baseURI(),
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
@@ -158,6 +155,36 @@ contract NFTIME is
                                 getAttributes(date),
                                 ', "image":"',
                                 svgToImageURI(renderer.render(date)),
+                                '"}'
+                            )
+                        )
+                    )
+                )
+            );
+    }
+
+    /// @dev Render the JSON Metadata for a given rarity NFTIME.
+    /// @param _tokenId The id of the token to render.
+    /// @param _ipfsURI Custom ipfs uri.
+    function _rarityTokenURI(
+        uint256 _tokenId,
+        string memory _ipfsURI
+    ) public view returns (string memory) {
+        Date memory date = tokenIdToRarityTimeStruct[_tokenId];
+
+        return
+            string(
+                abi.encodePacked(
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                '{"name":"',
+                                "Rarity LOL",
+                                '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
+                                '"attributes": ',
+                                getAttributes(date),
+                                ', "image":"',
+                                _ipfsURI,
                                 '"}'
                             )
                         )
@@ -261,7 +288,19 @@ contract NFTIME is
         require(success, "Unable to withdraw");
     }
 
-    // Overrides of required Method
+    /// @dev Overrides of required Methods
+    function tokenURI(
+        uint256 _tokenId
+    )
+        public
+        view
+        virtual
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(_tokenId);
+    }
+
     function _beforeTokenTransfer(
         address from,
         address to,
