@@ -7,29 +7,24 @@ library utils {
     string internal constant NULL = "";
 
     // formats a CSS variable line. includes a semicolon for formatting.
-    function setCssVar(string memory _key, string memory _val)
-        internal
-        pure
-        returns (string memory)
-    {
+    function setCssVar(
+        string memory _key,
+        string memory _val
+    ) internal pure returns (string memory) {
         return string.concat("--", _key, ":", _val, ";");
     }
 
     // formats getting a css variable
-    function getCssVar(string memory _key)
-        internal
-        pure
-        returns (string memory)
-    {
+    function getCssVar(
+        string memory _key
+    ) internal pure returns (string memory) {
         return string.concat("var(--", _key, ")");
     }
 
     // formats getting a def URL
-    function getDefURL(string memory _id)
-        internal
-        pure
-        returns (string memory)
-    {
+    function getDefURL(
+        string memory _id
+    ) internal pure returns (string memory) {
         return string.concat("url(#", _id, ")");
     }
 
@@ -68,21 +63,18 @@ library utils {
     }
 
     // checks if two strings are equal
-    function stringsEqual(string memory _a, string memory _b)
-        internal
-        pure
-        returns (bool)
-    {
+    function stringsEqual(
+        string memory _a,
+        string memory _b
+    ) internal pure returns (bool) {
         return
             keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b));
     }
 
     // returns the length of a string in characters
-    function utfStringLength(string memory _str)
-        internal
-        pure
-        returns (uint256 length)
-    {
+    function utfStringLength(
+        string memory _str
+    ) internal pure returns (uint256 length) {
         uint256 i = 0;
         bytes memory string_rep = bytes(_str);
 
@@ -100,11 +92,9 @@ library utils {
     }
 
     // converts an unsigned integer to a string
-    function uint2str(uint256 _i)
-        internal
-        pure
-        returns (string memory _uintAsString)
-    {
+    function uint2str(
+        uint256 _i
+    ) internal pure returns (string memory _uintAsString) {
         if (_i == 0) {
             return "0";
         }

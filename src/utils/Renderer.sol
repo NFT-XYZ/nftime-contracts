@@ -27,11 +27,9 @@ contract Renderer {
             );
     }
 
-    function renderDayAttributes(Date memory date)
-        internal
-        pure
-        returns (string memory)
-    {
+    function renderDayAttributes(
+        Date memory date
+    ) internal pure returns (string memory) {
         return
             string.concat(
                 getSVGPath("M0 0h1000.8v1000.8H0z", "white"),
@@ -60,11 +58,9 @@ contract Renderer {
             );
     }
 
-    function renderClockAttributes(Date memory date)
-        internal
-        pure
-        returns (string memory)
-    {
+    function renderClockAttributes(
+        Date memory date
+    ) internal pure returns (string memory) {
         return
             string.concat(
                 getSVGPath(
@@ -138,11 +134,10 @@ contract Renderer {
             );
     }
 
-    function getSVGPath(string memory d, string memory stroke)
-        internal
-        pure
-        returns (string memory)
-    {
+    function getSVGPath(
+        string memory d,
+        string memory stroke
+    ) internal pure returns (string memory) {
         return
             svg.path(
                 string.concat(
@@ -177,11 +172,10 @@ contract Renderer {
             );
     }
 
-    function computeRotation(uint256 rotation, uint256 product)
-        internal
-        pure
-        returns (string memory)
-    {
+    function computeRotation(
+        uint256 rotation,
+        uint256 product
+    ) internal pure returns (string memory) {
         return Strings.toString(180 + (rotation * product));
     }
 }
