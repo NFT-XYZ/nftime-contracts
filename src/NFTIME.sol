@@ -153,7 +153,7 @@ contract NFTIME is
                                 name,
                                 '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
                                 '"attributes": ',
-                                getAttributes(date),
+                                getAttributes(date, false),
                                 ', "image":"',
                                 svgToImageURI(renderer.render(date)),
                                 '"}'
@@ -170,7 +170,7 @@ contract NFTIME is
     function _rarityTokenURI(
         uint256 _tokenId,
         string memory _ipfsURI,
-        string memory _name,
+        string memory _name
     ) public view returns (string memory) {
         Date memory date = tokenIdToRarityTimeStruct[_tokenId];
 
@@ -184,7 +184,7 @@ contract NFTIME is
                                 _name,
                                 '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
                                 '"attributes": ',
-                                getAttributes(date),
+                                getAttributes(date, true),
                                 ', "image":"',
                                 _ipfsURI,
                                 '"}'
@@ -208,7 +208,8 @@ contract NFTIME is
     /// @dev Concat all the date attributes.
     /// @param date The used datestruct {Datetime}.
     function getAttributes(
-        Date memory date
+        Date memory date,
+        bool isRarity
     ) internal pure returns (string memory) {
         return
             string.concat(
@@ -222,6 +223,8 @@ contract NFTIME is
                 concatAttribute("hour", date.hour),
                 ",",
                 concatAttribute("minute", date.minute),
+                ",",
+                concatAttribute("rarity", isRarity ? "true" : "false"),
                 "]"
             );
     }
