@@ -115,6 +115,7 @@ contract NFTIME is
     /// @param _tokenUri TokenURI to special rarity NFTIME
     function rarityMint(
         string memory _tokenUri,
+        string memory name,
         Date memory date
     ) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused returns (uint256) {
         _tokenIds.increment();
@@ -124,7 +125,7 @@ contract NFTIME is
 
         tokenIdToRarityTimeStruct[newItemId] = date;
 
-        _setTokenURI(newItemId, _rarityTokenURI(newItemId, _tokenUri));
+        _setTokenURI(newItemId, _rarityTokenURI(newItemId, _tokenUri, name));
 
         emit RarityMint(msg.sender, newItemId);
 
@@ -168,7 +169,8 @@ contract NFTIME is
     /// @param _ipfsURI Custom ipfs uri.
     function _rarityTokenURI(
         uint256 _tokenId,
-        string memory _ipfsURI
+        string memory _ipfsURI,
+        string memory _name,
     ) public view returns (string memory) {
         Date memory date = tokenIdToRarityTimeStruct[_tokenId];
 
@@ -179,7 +181,7 @@ contract NFTIME is
                         bytes(
                             abi.encodePacked(
                                 '{"name":"',
-                                "Rarity LOL",
+                                _name,
                                 '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
                                 '"attributes": ',
                                 getAttributes(date),
