@@ -32,7 +32,7 @@ contract Renderer {
     ) internal pure returns (string memory) {
         return
             string.concat(
-                getSVGPath("M0 0h1000.8v1000.8H0z", "white"),
+                getSVGPath("M0 0h1000.8v1000.8H0z", "black"),
                 getDayAttribute(":", "126", "200", "40", "720", "505"),
                 getDayAttribute(date.hour, "142", "200", "200", "520", "520"),
                 getDayAttribute(date.minute, "142", "200", "200", "760", "520"),
