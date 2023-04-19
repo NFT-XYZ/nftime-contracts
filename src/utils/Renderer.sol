@@ -19,7 +19,7 @@ contract Renderer {
         return
             string.concat(
                 '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" style="background:#000">',
-                '<defs><style>@font-face{font-family:"HelveticaNowDisplayMd"; src:url("https://nftime.vercel.app/_next/static/media/HelveticaNowDisplayMd.e2e7c552.woff2");} .container {height: 100%; display:flex; align-items:center; justify-content:center;} p {font-family:"HelveticaNowDisplayMd"; color:white; margin:0;}',
+                '<defs><style>@font-face{font-family:"HelveticaNowDisplayMd"; src:url("https://nftime.vercel.app/_next/static/media/HelveticaNowDisplayMd.e2e7c552.woff2");} .container {height: 100%; display:flex; align-items:center; justify-content:center;} p {font-family:"HelveticaNowDisplayMd" !important; color:white; margin:0;}',
                 "@keyframes rotation {from {transform: rotate(0deg);} to {transform: rotate(360deg);}}",
                 "#hand-s-use {animation: rotation 60s linear infinite;}",
                 "</style>",
