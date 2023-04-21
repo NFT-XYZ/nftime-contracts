@@ -42,7 +42,7 @@ import "./utils/Renderer.sol";
     ;xxxxxxxxxxkkxxkl.  ;xk:          'dkl.  ;xxxxxxxxxxxxxxkl.
 
 @title  NFTIME
-@author NFTXYZ.ch (Olivier Winkler)
+@author https://nftxyz.art/ (Olivier Winkler)
 @notice MINT YOUR MINUTE
 */
 contract NFTIME is
