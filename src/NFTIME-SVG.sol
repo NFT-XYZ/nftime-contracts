@@ -58,7 +58,7 @@ contract NFTIME is
 
     DateTime dateTimeUtil = new DateTime();
 
-    string public websiteUrl;
+    Renderer public renderer;
 
     /// @notice Minting events
     event Mint(address indexed _address, uint256 _tokenId);
@@ -77,12 +77,9 @@ contract NFTIME is
     mapping(uint256 => Date) public tokenIdToRarityTimeStruct;
 
     /// @dev Initialize NFTIME Contract, grant DEFAULT_ADMIN_ROLE & set {Renderer}.
-    constructor(
-        address _multisig,
-        string memory _url
-    ) ERC721("NFTIME", "TIME") {
+    constructor(address _renderer, address _multisig) ERC721("NFTIME", "TIME") {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
-        websiteUrl = _url;
+        renderer = Renderer(_renderer);
     }
 
     /// @dev Mint Regular NFTIME
@@ -116,24 +113,24 @@ contract NFTIME is
 
     /// @dev Mint Rarity NFTIME
     /// @param _tokenUri TokenURI to special rarity NFTIME
-    // function rarityMint(
-    //     string memory _tokenUri,
-    //     string memory name,
-    //     Date memory date
-    // ) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused returns (uint256) {
-    //     _tokenIds.increment();
-    //     uint256 newItemId = _tokenIds.current();
+    function rarityMint(
+        string memory _tokenUri,
+        string memory name,
+        Date memory date
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused returns (uint256) {
+        _tokenIds.increment();
+        uint256 newItemId = _tokenIds.current();
 
-    //     _mint(msg.sender, newItemId);
+        _mint(msg.sender, newItemId);
 
-    //     tokenIdToRarityTimeStruct[newItemId] = date;
+        tokenIdToRarityTimeStruct[newItemId] = date;
 
-    //     _setTokenURI(newItemId, _rarityTokenURI(newItemId, _tokenUri, name));
+        _setTokenURI(newItemId, _rarityTokenURI(newItemId, _tokenUri, name));
 
-    //     emit RarityMint(msg.sender, newItemId);
+        emit RarityMint(msg.sender, newItemId);
 
-    //     return newItemId;
-    // }
+        return newItemId;
+    }
 
     /// @dev Render the JSON Metadata for a given NFTIME.
     /// @param _tokenId The id of the token to render.
@@ -157,11 +154,8 @@ contract NFTIME is
                                 '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
                                 '"attributes": ',
                                 getAttributes(date, false),
-                                ', "image":"ipfs://QmQVS7T3X2eWeXtzpLuDkRWNgqWMsknWJqNpRs1PH666YY", ',
-                                '"external_url":"',
-                                websiteUrl,
-                                '", "animation_url":"',
-                                websiteUrl,
+                                ', "image":"',
+                                svgToImageURI(renderer.render(date)),
                                 '"}'
                             )
                         )
@@ -173,33 +167,33 @@ contract NFTIME is
     /// @dev Render the JSON Metadata for a given rarity NFTIME.
     /// @param _tokenId The id of the token to render.
     /// @param _ipfsURI Custom ipfs uri.
-    // function _rarityTokenURI(
-    //     uint256 _tokenId,
-    //     string memory _ipfsURI,
-    //     string memory _name
-    // ) public view returns (string memory) {
-    //     Date memory date = tokenIdToRarityTimeStruct[_tokenId];
+    function _rarityTokenURI(
+        uint256 _tokenId,
+        string memory _ipfsURI,
+        string memory _name
+    ) public view returns (string memory) {
+        Date memory date = tokenIdToRarityTimeStruct[_tokenId];
 
-    //     return
-    //         string(
-    //             abi.encodePacked(
-    //                 Base64.encode(
-    //                     bytes(
-    //                         abi.encodePacked(
-    //                             '{"name":"',
-    //                             _name,
-    //                             '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
-    //                             '"attributes": ',
-    //                             getAttributes(date, true),
-    //                             ', "image":"',
-    //                             _ipfsURI,
-    //                             '"}'
-    //                         )
-    //                     )
-    //                 )
-    //             )
-    //         );
-    // }
+        return
+            string(
+                abi.encodePacked(
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                '{"name":"',
+                                _name,
+                                '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
+                                '"attributes": ',
+                                getAttributes(date, true),
+                                ', "image":"',
+                                _ipfsURI,
+                                '"}'
+                            )
+                        )
+                    )
+                )
+            );
+    }
 
     /// @dev IPFS Link to Opensea Collection Metadata.
     function contractURI() public pure returns (string memory) {
@@ -263,6 +257,14 @@ contract NFTIME is
             bytes(string(abi.encodePacked(_svg)))
         );
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
+    }
+
+    /// @dev Set a new Renderer Contract.
+    /// @param _renderer New Renderer Address.
+    function setRenderer(
+        Renderer _renderer
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        renderer = _renderer;
     }
 
     /// @dev Update DEFAULT_ADMIN_ROLE.
