@@ -8,10 +8,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
 
 import "./utils/DateTime.sol";
-import "./utils/Renderer.sol";
 
 /**                                        
     c00l         ,k0d.  c0000000000000000d.  c000000000000000d.
