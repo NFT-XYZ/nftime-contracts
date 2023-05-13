@@ -58,37 +58,29 @@ contract NFTIME is
 
     DateTime dateTimeUtil = new DateTime();
 
-    string public websiteUrl;
+    string private contractUri =
+        "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
 
     /// @notice Minting events
     event Mint(address indexed _address, uint256 _tokenId);
     event RarityMint(address indexed _address, uint256 _tokenId);
 
+    /// @notice 1 -> 946681200
+    mapping(uint256 => uint256) public tokenIdToTimeStamp;
+
     /// @notice 01.JAN 2030 12:00 -> true / false
     mapping(string => bool) public mintedTimes;
 
-    /// @notice 1 -> 01.JAN 2030 12:00
-    mapping(uint256 => string) public tokenIdToTime;
-
-    /// @notice 1 -> [year:'2030',month:'JAN',day:'01',hour:'11',minute:'00']
-    mapping(uint256 => Date) public tokenIdToTimeStruct;
-
-    /// @notice tokenId -> is rarity?
-    mapping(uint256 => Date) public tokenIdToRarityTimeStruct;
-
-    /// @dev Initialize NFTIME Contract, grant DEFAULT_ADMIN_ROLE & set {Renderer}.
-    constructor(
-        address _multisig,
-        string memory _url
-    ) ERC721("NFTIME", "TIME") {
+    /// @dev Initialize NFTIME Contract, grant DEFAULT_ADMIN_ROLE to multisig.
+    constructor(address _multisig) ERC721("NFTIME", "TIME") {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
-        websiteUrl = _url;
     }
 
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
     function mint(
-        uint256 _time
+        uint256 _time,
+        string memory _tokenUri
     ) public payable whenNotPaused returns (uint256) {
         require(msg.value == 0.01 ether, "Not enough ETH sent, check price");
 
@@ -104,165 +96,37 @@ contract NFTIME is
         _mint(msg.sender, newItemId);
 
         mintedTimes[date] = true;
-        tokenIdToTime[newItemId] = date;
-        tokenIdToTimeStruct[newItemId] = ts;
+        tokenIdToTimeStamp[newItemId] = _time;
 
-        _setTokenURI(newItemId, _tokenURI(newItemId));
+        _setTokenURI(newItemId, _tokenURI(newItemId, _tokenUri));
 
         emit Mint(msg.sender, newItemId);
 
         return newItemId;
     }
 
-    /// @dev Mint Rarity NFTIME
-    /// @param _tokenUri TokenURI to special rarity NFTIME
-    // function rarityMint(
-    //     string memory _tokenUri,
-    //     string memory name,
-    //     Date memory date
-    // ) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused returns (uint256) {
-    //     _tokenIds.increment();
-    //     uint256 newItemId = _tokenIds.current();
-
-    //     _mint(msg.sender, newItemId);
-
-    //     tokenIdToRarityTimeStruct[newItemId] = date;
-
-    //     _setTokenURI(newItemId, _rarityTokenURI(newItemId, _tokenUri, name));
-
-    //     emit RarityMint(msg.sender, newItemId);
-
-    //     return newItemId;
-    // }
-
     /// @dev Render the JSON Metadata for a given NFTIME.
     /// @param _tokenId The id of the token to render.
-    function _tokenURI(uint256 _tokenId) public view returns (string memory) {
+    function _tokenURI(
+        uint256 _tokenId,
+        string memory _tokenUri
+    ) public view returns (string memory) {
         require(
             _exists(_tokenId),
             "ERC721Metadata: URI query for nonexistent token"
         );
 
-        string memory name = tokenIdToTime[_tokenId];
-        Date memory date = tokenIdToTimeStruct[_tokenId];
-
-        return
-            string(
-                abi.encodePacked(
-                    Base64.encode(
-                        bytes(
-                            abi.encodePacked(
-                                '{"name":"',
-                                name,
-                                '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
-                                '"attributes": ',
-                                getAttributes(date, false),
-                                ', "image":"ipfs://QmQVS7T3X2eWeXtzpLuDkRWNgqWMsknWJqNpRs1PH666YY", ',
-                                '"external_url":"',
-                                websiteUrl,
-                                '", "animation_url":"',
-                                websiteUrl,
-                                '"}'
-                            )
-                        )
-                    )
-                )
-            );
+        return _tokenUri;
     }
 
-    /// @dev Render the JSON Metadata for a given rarity NFTIME.
-    /// @param _tokenId The id of the token to render.
-    /// @param _ipfsURI Custom ipfs uri.
-    // function _rarityTokenURI(
-    //     uint256 _tokenId,
-    //     string memory _ipfsURI,
-    //     string memory _name
-    // ) public view returns (string memory) {
-    //     Date memory date = tokenIdToRarityTimeStruct[_tokenId];
-
-    //     return
-    //         string(
-    //             abi.encodePacked(
-    //                 Base64.encode(
-    //                     bytes(
-    //                         abi.encodePacked(
-    //                             '{"name":"',
-    //                             _name,
-    //                             '", "description":"Collect your favourite Time. Set your time. Mint your minute!.", ',
-    //                             '"attributes": ',
-    //                             getAttributes(date, true),
-    //                             ', "image":"',
-    //                             _ipfsURI,
-    //                             '"}'
-    //                         )
-    //                     )
-    //                 )
-    //             )
-    //         );
-    // }
-
     /// @dev IPFS Link to Opensea Collection Metadata.
-    function contractURI() public pure returns (string memory) {
-        return "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
+    function contractURI() public view returns (string memory) {
+        return contractUri;
     }
 
     /// @dev Base URI for Metadata.
     function _baseURI() internal pure override returns (string memory) {
         return "data:application/json;base64,";
-    }
-
-    /// @dev Concat all the date attributes.
-    /// @param date The used datestruct {Datetime}.
-    function getAttributes(
-        Date memory date,
-        bool isRarity
-    ) internal pure returns (string memory) {
-        return
-            string.concat(
-                "[",
-                concatAttribute("year", Strings.toString(date.year)),
-                ",",
-                concatAttribute("month", date.month),
-                ",",
-                concatAttribute("day", date.day),
-                ",",
-                concatAttribute("hour", date.hour),
-                ",",
-                concatAttribute("minute", date.minute),
-                ",",
-                concatAttribute("rarity", isRarity ? "true" : "false"),
-                "]"
-            );
-    }
-
-    /// @dev Concat metadata attribute.
-    /// @param label Label of the attribute.
-    /// @param attribute Value of the attribute.
-    function concatAttribute(
-        string memory label,
-        string memory attribute
-    ) internal pure returns (string memory) {
-        return
-            string.concat(
-                "{",
-                '"trait_type": "',
-                label,
-                '", "value": "',
-                attribute,
-                '"}'
-            );
-    }
-
-    /// @dev Encodes svg into base64.
-    /// @param _svg SVG code.
-    function svgToImageURI(
-        string memory _svg
-    ) internal pure returns (string memory) {
-        string memory baseURL = "data:image/svg+xml;base64,";
-        string memory svgBase64Encoded = Base64.encode(
-            bytes(string(abi.encodePacked(_svg)))
-        );
-        return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
 
     /// @dev Update DEFAULT_ADMIN_ROLE.
@@ -271,6 +135,24 @@ contract NFTIME is
         address _multisig
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
+    }
+
+    /// @dev Update contractURI.
+    /// @param _contractUri New contract URI.
+    function updateContractUri(
+        string memory _contractUri
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        contractUri = _contractUri;
+    }
+
+    /// @dev Update metadata of nft.
+    /// @param _tokenId Id of token.
+    /// @param _tokenUri New token URI.
+    function updateNftMetadata(
+        uint256 _tokenId,
+        string memory _tokenUri
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _setTokenURI(_tokenId, _tokenUri);
     }
 
     /// @dev Stop Minting
@@ -291,7 +173,8 @@ contract NFTIME is
         require(success, "Unable to withdraw");
     }
 
-    /// @dev Overrides of required Methods
+    // The following functions are overrides required by Solidity.
+
     function tokenURI(
         uint256 _tokenId
     )
