@@ -122,11 +122,6 @@ contract NFTIME is
         return contractUri;
     }
 
-    /// @dev Base URI for Metadata.
-    function _baseURI() internal pure override returns (string memory) {
-        return "data:application/json;base64,";
-    }
-
     /// @dev Update DEFAULT_ADMIN_ROLE.
     /// @param _multisig New multisig address.
     function setDefaultAdminRole(

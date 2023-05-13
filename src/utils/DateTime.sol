@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2018 The Officious BokkyPooBah / Bok Consulting Pty Ltd
-// Copyright (c) 2022 NFTXYZ (Olivier Winkler) Added & Modified Functions
+// Copyright (c) 2023 NFTXYZ (Olivier Winkler) Added & Modified Functions
 
 pragma solidity ^0.8.16;
 
