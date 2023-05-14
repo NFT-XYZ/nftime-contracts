@@ -9,7 +9,7 @@ Consolidate ```.env.local``` fill out ```.env```
 | Contract      | Network | Contract address |
 | ------------- | ------- | ---------------- |
 | Renderer    | ?       | not deployed yet |
-| NFTIME | goerli      |  |
+| NFTIME | goerli      | 0x950ff76f6f7b73f393bdfa39e631e226007740db |
 
 ### Deploy contracts
 
