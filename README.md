@@ -4,6 +4,8 @@
 
 Consolidate ```.env.local``` fill out ```.env```
 
+## Deployed Contracts (Legacy)
+
 ## Deployed Contracts
 
 | Contract      | Network | Contract address |
