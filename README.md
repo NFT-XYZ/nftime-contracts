@@ -6,6 +6,11 @@ Consolidate ```.env.local``` fill out ```.env```
 
 ## Deployed Contracts (Legacy)
 
+| Contract      | Network | Contract address |
+| ------------- | ------- | ---------------- |
+| Renderer    | ?       | not deployed yet |
+| NFTIME | goerli      | 0x950ff76f6f7b73f393bdfa39e631e226007740db |
+
 ## Deployed Contracts
 
 | Contract      | Network | Contract address |
