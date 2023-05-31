@@ -52,3 +52,6 @@ anvil
 # if you want to fork an existing blockchain, because you need to interact with existing contracts, e.g on goerli testnet
 anvil -f https://eth-goerli.g.alchemy.com/v2/<your_api_keys>
 ```
+
+### Research
+https://www.web3.university/article/flavours-of-on-chain-svg-nfts-on-ethereum
