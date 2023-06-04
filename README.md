@@ -8,14 +8,16 @@ Consolidate ```.env.local``` fill out ```.env```
 
 | Contract      | Network | Contract address |
 | ------------- | ------- | ---------------- |
+| DateTime    | ?       | not deployed yet |
 | Renderer    | ?       | not deployed yet |
-| NFTIME | goerli      | 0x950ff76f6f7b73f393bdfa39e631e226007740db |
+| SVG    | ?       | not deployed yet |
+| Utils    | ?       | not deployed yet |
+| NFTIME-SVG | goerli      | 0x950ff76f6f7b73f393bdfa39e631e226007740db |
 
 ## Deployed Contracts
 
 | Contract      | Network | Contract address |
 | ------------- | ------- | ---------------- |
-| Renderer    | ?       | not deployed yet |
 | NFTIME | goerli      | 0x950ff76f6f7b73f393bdfa39e631e226007740db |
 
 ### Deploy contracts
