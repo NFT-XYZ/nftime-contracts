@@ -11,6 +11,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
 import "./utils/DateTime.sol";
 
+error WithdrawError();
+
 /**                                        
     c00l         ,k0d.  c0000000000000000d.  c000000000000000d.
     oMMO:;'      :XM0'  dMMXkxkxxxxxxxxxkl.  ;kkxxxONMWKxxxxxl.
@@ -163,7 +165,9 @@ contract NFTIME is
         (bool success, ) = payable(msg.sender).call{
             value: address(this).balance
         }("");
-        require(success, "Unable to withdraw");
+        if (!success) {
+            revert WithdrawError();
+        }
     }
 
     // The following functions are overrides required by Solidity.
