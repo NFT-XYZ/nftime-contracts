@@ -51,13 +51,13 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     error NFTIME__WithdrawError();
 
     Counters.Counter private s_tokenIds;
-    string private contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
-    DateTime private immutable dateTimeUtil = new DateTime();
+    string private s_contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
+    DateTime private immutable i_dateTimeUtil = new DateTime();
 
     /// @notice 1 -> 946681200
-    mapping(uint256 => uint256) private tokenIdToTimeStamp;
+    mapping(uint256 => uint256) private s_tokenIdToTimeStamp;
     /// @notice 01.JAN 2030 12:00 -> true / false
-    mapping(string => bool) private mintedTimes;
+    mapping(string => bool) private s_mintedTimes;
 
     /// @notice Minting events
     event Mint(address indexed _address, uint256 indexed _tokenId);
@@ -70,7 +70,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
-    function mint(uint256 _time, string memory _tokenUri) external payable whenNotPaused returns (uint256) {
+    function mint(uint256 _time, string memory _tokenUri) external payable whenNotPaused {
         if (msg.value != 0.01 ether) {
             revert NFTIME__NotEnoughEtherSent();
         }
@@ -78,24 +78,21 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokenIds.increment();
         uint256 newItemId = s_tokenIds.current();
 
-        Date memory ts = dateTimeUtil.timestampToDateTime(_time);
+        Date memory ts = i_dateTimeUtil.timestampToDateTime(_time);
+        string memory date = i_dateTimeUtil.formatDate(ts);
 
-        string memory date = dateTimeUtil.formatDate(ts);
-
-        if (mintedTimes[date] == true) {
+        if (s_mintedTimes[date] == true) {
             revert NFTIME__TimeAlreadyMinted();
         }
 
         _mint(msg.sender, newItemId);
 
-        mintedTimes[date] = true;
-        tokenIdToTimeStamp[newItemId] = _time;
+        s_mintedTimes[date] = true;
+        s_tokenIdToTimeStamp[newItemId] = _time;
 
         _setTokenURI(newItemId, _tokenUri);
 
         emit Mint(msg.sender, newItemId);
-
-        return newItemId;
     }
 
     /// @dev Withdraw collected Funds
@@ -112,10 +109,10 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
     }
 
-    /// @dev Update contractURI.
+    /// @dev Update s_contractUri.
     /// @param _contractUri New contract URI.
     function updateContractUri(string memory _contractUri) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        contractUri = _contractUri;
+        s_contractUri = _contractUri;
     }
 
     /// @dev Update metadata of nft.
@@ -137,7 +134,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev IPFS Link to Opensea Collection Metadata.
     function contractURI() external view returns (string memory) {
-        return contractUri;
+        return s_contractUri;
     }
 
     // The following functions are overrides required by Solidity.
