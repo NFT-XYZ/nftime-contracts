@@ -11,10 +11,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
 import "./utils/DateTime.sol";
 
-error NFTIME__WithdrawError();
-
 /**
- * c00l         ,k0d.  c0000000000000000d.  c000000000000000d.
+ *     c00l         ,k0d.  c0000000000000000d.  c000000000000000d.
  *     oMMO:;'      :XM0'  dMMXkxkxxxxxxxxxkl.  ;kkxxxONMWKxxxxxl.
  *     dMMMWM0'     :XM0'  dMMx.                      .OMNc
  *     dMM0l:codl.  :XM0'  dMMd.                      .OMN:
@@ -48,21 +46,22 @@ error NFTIME__WithdrawError();
 contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, ERC721Pausable, ERC721Burnable {
     using Counters for Counters.Counter;
 
-    Counters.Counter private _tokenIds;
+    error NFTIME__NotEnoughEtherSent();
+    error NFTIME__TimeAlreadyMinted();
+    error NFTIME__WithdrawError();
 
-    DateTime dateTimeUtil = new DateTime();
-
+    Counters.Counter private s_tokenIds;
     string private contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
-
-    /// @notice Minting events
-    event Mint(address indexed _address, uint256 _tokenId);
-    event RarityMint(address indexed _address, uint256 _tokenId);
+    DateTime private immutable dateTimeUtil = new DateTime();
 
     /// @notice 1 -> 946681200
-    mapping(uint256 => uint256) public tokenIdToTimeStamp;
-
+    mapping(uint256 => uint256) private tokenIdToTimeStamp;
     /// @notice 01.JAN 2030 12:00 -> true / false
-    mapping(string => bool) public mintedTimes;
+    mapping(string => bool) private mintedTimes;
+
+    /// @notice Minting events
+    event Mint(address indexed _address, uint256 indexed _tokenId);
+    event RarityMint(address indexed _address, uint256 indexed _tokenId);
 
     /// @dev Initialize NFTIME Contract, grant DEFAULT_ADMIN_ROLE to multisig.
     constructor(address _multisig) ERC721("NFTIME", "TIME") {
@@ -71,41 +70,40 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
-    function mint(uint256 _time, string memory _tokenUri) public payable whenNotPaused returns (uint256) {
-        require(msg.value == 0.01 ether, "Not enough ETH sent, check price");
+    function mint(uint256 _time, string memory _tokenUri) external payable whenNotPaused returns (uint256) {
+        if (msg.value != 0.01 ether) {
+            revert NFTIME__NotEnoughEtherSent();
+        }
 
-        _tokenIds.increment();
-        uint256 newItemId = _tokenIds.current();
+        s_tokenIds.increment();
+        uint256 newItemId = s_tokenIds.current();
 
         Date memory ts = dateTimeUtil.timestampToDateTime(_time);
 
         string memory date = dateTimeUtil.formatDate(ts);
 
-        require(mintedTimes[date] == false, "Time has already been minted!");
+        if (mintedTimes[date] == true) {
+            revert NFTIME__TimeAlreadyMinted();
+        }
 
         _mint(msg.sender, newItemId);
 
         mintedTimes[date] = true;
         tokenIdToTimeStamp[newItemId] = _time;
 
-        _setTokenURI(newItemId, _tokenURI(newItemId, _tokenUri));
+        _setTokenURI(newItemId, _tokenUri);
 
         emit Mint(msg.sender, newItemId);
 
         return newItemId;
     }
 
-    /// @dev Render the JSON Metadata for a given NFTIME.
-    /// @param _tokenId The id of the token to render.
-    function _tokenURI(uint256 _tokenId, string memory _tokenUri) public view returns (string memory) {
-        require(_exists(_tokenId), "ERC721Metadata: URI query for nonexistent token");
-
-        return _tokenUri;
-    }
-
-    /// @dev IPFS Link to Opensea Collection Metadata.
-    function contractURI() public view returns (string memory) {
-        return contractUri;
+    /// @dev Withdraw collected Funds
+    function withdraw() external payable onlyRole(DEFAULT_ADMIN_ROLE) {
+        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
+        if (!success) {
+            revert NFTIME__WithdrawError();
+        }
     }
 
     /// @dev Update DEFAULT_ADMIN_ROLE.
@@ -137,12 +135,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         _unpause();
     }
 
-    /// @dev Withdraw collected Funds
-    function withdraw() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
-        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
-        if (!success) {
-            revert NFTIME__WithdrawError();
-        }
+    /// @dev IPFS Link to Opensea Collection Metadata.
+    function contractURI() external view returns (string memory) {
+        return contractUri;
     }
 
     // The following functions are overrides required by Solidity.
