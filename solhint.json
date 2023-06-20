@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "private-vars-leading-underscore": [
+      "warn",
+      {
+        "strict": false
+      }
+    ]
+  }
+}
