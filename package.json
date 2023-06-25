@@ -1,0 +1,39 @@
+{
+  "name": "@owieth/foundry-setup",
+  "version": "1.0.0",
+  "description": "Foundry-based template for developing Solidity smart contracts",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "scripts": {
+    "lint": "yarn lint:sol && yarn prettier",
+    "lint:sol": "forge fmt --check && yarn solhint \"{script,src,test}/**/*.sol\"",
+    "prettier": "prettier --write \"**/*.{json,md,yml}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owieth/foundry-setup.git"
+  },
+  "author": {
+    "name": "Olivier Winkler",
+    "url": "https://github.com/owieth"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "forge",
+    "foundry",
+    "smart-contracts",
+    "solidity",
+    "template"
+  ],
+  "bugs": {
+    "url": "https://github.com/owieth/foundry-setup/issues"
+  },
+  "homepage": "https://github.com/owieth/foundry-setup#readme",
+  "devDependencies": {
+    "prettier": "^2.8.8",
+    "solhint": "^3.4.1"
+  }
+}
