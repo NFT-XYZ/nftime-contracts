@@ -40,37 +40,66 @@ import {Date, DateTime} from "./utils/DateTime.sol";
  *     c00000KWMMX00000d.  dMMd          :XM0'  dMMNK00000000000d.
  *     ;xxxxxxxxxxkkxxkl.  ;xk:          'dkl.  ;xxxxxxxxxxxxxxkl.
  *
- * @title  NFTIME
- * @author https://nftxyz.art/ (Olivier Winkler)
- * @notice MINT YOUR MINUTE
  */
+
+/// @title NFTIME
+/// @author https://nftxyz.art/ (Olivier Winkler)
+/// @notice MINT YOUR MINUTE
+/// @custom:security-contact abc@nftxyz.art
 contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, ERC721Pausable, ERC721Burnable {
     using Counters for Counters.Counter;
 
+    /*//////////////////////////////////////////////////////////////
+                                ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Thrown if the sent amount of ethers isn't equal to price
     error NFTIME__NotEnoughEtherSent();
+
+    /// @dev Thrown if the sent amount of ethers isn't equal to price
     error NFTIME__TimeAlreadyMinted();
+
+    /// @dev Thrown if the sent amount of ethers isn't equal to price
     error NFTIME__WithdrawError();
 
+    /*//////////////////////////////////////////////////////////////
+                                STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Thrown if the sent amount of ethers isn't equal to price
     Counters.Counter private s_tokenIds;
+
+    /// @dev Thrown if the sent amount of ethers isn't equal to price
     string private s_contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
+
+    /// @dev Thrown if the sent amount of ethers isn't equal to price
     DateTime private immutable i_dateTimeUtil = new DateTime();
 
-    /// @notice 1 -> 946681200
-    mapping(uint256 => uint256) private s_tokenIdToTimeStamp;
-    /// @notice 01.JAN 2030 12:00 -> true / false
-    mapping(string => bool) private s_mintedTimes;
+    /// @dev Mapps TokenId to the associated minted Timestamp (e.g. 1 -> 946681200)
+    mapping(uint256 tokenId => uint256 timestamp) private s_tokenIdToTimeStamp;
 
-    /// @notice Minting events
-    event Mint(address indexed _address, uint256 indexed _tokenId);
-    event RarityMint(address indexed _address, uint256 indexed _tokenId);
+    /// @dev Mapps the minted formatted Date to minted (e.g. 01.JAN 2030 12:00 -> true / false)
+    mapping(string date => bool minted) private s_mintedTimes;
+
+    /*//////////////////////////////////////////////////////////////
+                              CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
 
     /// @dev Initialize NFTIME Contract, grant DEFAULT_ADMIN_ROLE to multisig.
+    /// @notice Initialize GreenLoan Contract
+    /// @dev Function can be only called once
+    /// @param _multisig Name for ERC20
     constructor(address _multisig) ERC721("NFTIME", "TIME") {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
     }
 
+    /*//////////////////////////////////////////////////////////////
+                                EXTERNAL
+    //////////////////////////////////////////////////////////////*/
+
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
+    /// @param _tokenUri Timestamp for minted NFTIME
     function mint(uint256 _time, string memory _tokenUri) external payable whenNotPaused {
         if (msg.value != 0.01 ether) {
             revert NFTIME__NotEnoughEtherSent();
@@ -92,8 +121,6 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokenIdToTimeStamp[newItemId] = _time;
 
         _setTokenURI(newItemId, _tokenUri);
-
-        emit Mint(msg.sender, newItemId);
     }
 
     /// @dev Withdraw collected Funds
@@ -134,12 +161,18 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     }
 
     /// @dev IPFS Link to Opensea Collection Metadata.
+    /// @return Returns contractUri
     function contractURI() external view returns (string memory) {
         return s_contractUri;
     }
 
-    // The following functions are overrides required by Solidity.
+    /*//////////////////////////////////////////////////////////////
+                            INTERNAL OVERRIDES
+    //////////////////////////////////////////////////////////////*/
 
+    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
+    /// @dev Function can only be when Contract is not paused
+    /// @param _tokenId Sender's Address
     function tokenURI(uint256 _tokenId)
         public
         view
@@ -150,6 +183,12 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         return super.tokenURI(_tokenId);
     }
 
+    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
+    /// @dev Function can only be when Contract is not paused
+    /// @param from Sender's Address
+    /// @param to Recipient's Address
+    /// @param firstTokenId Token ID
+    /// @param batchSize Size of Batch
     function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
         internal
         override(ERC721, ERC721Enumerable, ERC721Pausable)
@@ -157,10 +196,16 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
+    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
+    /// @dev Function can only be when Contract is not paused
+    /// @param _tokenId Sender's Address
     function _burn(uint256 _tokenId) internal override(ERC721, ERC721URIStorage) whenNotPaused {
         super._burn(_tokenId);
     }
 
+    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
+    /// @dev Function can only be when Contract is not paused
+    /// @param interfaceId Sender's Address
     function supportsInterface(bytes4 interfaceId)
         public
         view
