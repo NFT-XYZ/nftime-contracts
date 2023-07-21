@@ -2,7 +2,7 @@
 // Copyright (c) 2018 The Officious BokkyPooBah / Bok Consulting Pty Ltd
 // Copyright (c) 2023 NFTXYZ (Olivier Winkler) Added & Modified Functions
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 
@@ -23,12 +23,8 @@ contract DateTime {
     uint256 private constant SECONDS_PER_MINUTE = 60;
     int256 constant OFFSET19700101 = 2440588;
 
-    function timestampToDateTime(
-        uint256 _timestamp
-    ) public pure returns (Date memory) {
-        (uint256 year, string memory month, string memory day) = _daysToDate(
-            _timestamp / SECONDS_PER_DAY
-        );
+    function timestampToDateTime(uint256 _timestamp) public pure returns (Date memory) {
+        (uint256 year, string memory month, string memory day) = _daysToDate(_timestamp / SECONDS_PER_DAY);
         uint256 secs = _timestamp % SECONDS_PER_DAY;
         uint256 _hour = secs / SECONDS_PER_HOUR;
         secs = secs % SECONDS_PER_HOUR;
@@ -42,27 +38,12 @@ contract DateTime {
     }
 
     function formatDate(Date memory _date) public pure returns (string memory) {
-        return
-            string.concat(
-                _date.day,
-                " ",
-                _date.month,
-                " ",
-                Strings.toString(_date.year),
-                " ",
-                _date.hour,
-                ":",
-                _date.minute
-            );
+        return string.concat(
+            _date.day, " ", _date.month, " ", Strings.toString(_date.year), " ", _date.hour, ":", _date.minute
+        );
     }
 
-    function _daysToDate(
-        uint256 _days
-    )
-        internal
-        pure
-        returns (uint256 year, string memory month, string memory day)
-    {
+    function _daysToDate(uint256 _days) internal pure returns (uint256 year, string memory month, string memory day) {
         int256 __days = int256(_days);
 
         int256 L = __days + 68569 + OFFSET19700101;
@@ -81,16 +62,12 @@ contract DateTime {
         day = _formatOctalNumbers(uint256(_day));
     }
 
-    function _formatOctalNumbers(
-        uint256 _number
-    ) internal pure returns (string memory temp) {
+    function _formatOctalNumbers(uint256 _number) internal pure returns (string memory temp) {
         temp = Strings.toString(_number);
         if (_number < 10) temp = string.concat("0", temp);
     }
 
-    function _getDayOfWeek(
-        uint256 _timestamp
-    ) internal pure returns (string memory) {
+    function _getDayOfWeek(uint256 _timestamp) internal pure returns (string memory) {
         uint256 _days = _timestamp / SECONDS_PER_DAY;
         uint256 dayOfWeek = ((_days + 3) % 7) + 1;
 
@@ -105,9 +82,7 @@ contract DateTime {
         return "";
     }
 
-    function _getMonthByNumber(
-        uint256 _month
-    ) internal pure returns (string memory month) {
+    function _getMonthByNumber(uint256 _month) internal pure returns (string memory month) {
         if (_month == 1) return "JAN";
         if (_month == 2) return "FEB";
         if (_month == 3) return "MAR";
