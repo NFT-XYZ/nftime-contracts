@@ -32,13 +32,34 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Thrown if the sent amount of ethers isn't equal to price
-    error NFTIME__NotEnoughEtherSent();
+    /// @param _value Value sent
+    error NFTIME__NotEnoughEtherSent(uint256 _value);
 
     /// @dev Thrown if the sent amount of ethers isn't equal to price
     error NFTIME__TimeAlreadyMinted();
 
     /// @dev Thrown if the sent amount of ethers isn't equal to price
     error NFTIME__WithdrawError();
+
+    /*//////////////////////////////////////////////////////////////
+                                CONSTANTS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Price in ETHER for a Minute
+    uint256 private constant NFTIME_MINUTE_PRICE = 0.01 ether;
+
+    /// @dev Price in ETHER for a Day
+    uint256 private constant NFTIME_DAY_PRICE = 0.1 ether;
+
+    /*//////////////////////////////////////////////////////////////
+                                ENUMS
+    //////////////////////////////////////////////////////////////*/
+
+    enum Type {
+        Minute,
+        Day,
+        Rarity
+    }
 
     /*//////////////////////////////////////////////////////////////
                                 STORAGE
@@ -81,9 +102,11 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
     /// @param _tokenUri Timestamp for minted NFTIME
-    function mint(uint256 _time, string memory _tokenUri) external payable whenNotPaused {
-        if (msg.value != 0.01 ether) {
-            revert NFTIME__NotEnoughEtherSent();
+    function mint(uint256 _time, string memory _tokenUri, Type _type) external payable whenNotPaused {
+        uint256 _price = _type == Type.Day ? NFTIME_DAY_PRICE : NFTIME_MINUTE_PRICE;
+
+        if (msg.value != _price) {
+            revert NFTIME__NotEnoughEtherSent(msg.value);
         }
 
         s_tokenIds.increment();

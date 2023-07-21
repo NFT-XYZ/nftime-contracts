@@ -21,20 +21,20 @@ contract DateTime {
     uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
     uint256 private constant SECONDS_PER_HOUR = 60 * 60;
     uint256 private constant SECONDS_PER_MINUTE = 60;
-    int256 constant OFFSET19700101 = 2440588;
+    int256 private constant OFFSET19700101 = 2440588;
 
     function timestampToDateTime(uint256 _timestamp) public pure returns (Date memory) {
-        (uint256 year, string memory month, string memory day) = _daysToDate(_timestamp / SECONDS_PER_DAY);
-        uint256 secs = _timestamp % SECONDS_PER_DAY;
-        uint256 _hour = secs / SECONDS_PER_HOUR;
-        secs = secs % SECONDS_PER_HOUR;
-        uint256 _minute = secs / SECONDS_PER_MINUTE;
+        (uint256 _year, string memory _month, string memory _day) = _daysToDate(_timestamp / SECONDS_PER_DAY);
+        uint256 _secs = _timestamp % SECONDS_PER_DAY;
+        uint256 _hourUint = _secs / SECONDS_PER_HOUR;
+        _secs = _secs % SECONDS_PER_HOUR;
+        uint256 _minuteUint = _secs / SECONDS_PER_MINUTE;
 
-        string memory hour = _formatOctalNumbers(_hour);
-        string memory minute = _formatOctalNumbers(_minute);
-        string memory dayOfWeek = _getDayOfWeek(_timestamp);
+        string memory _hour = _formatOctalNumbers(_hourUint);
+        string memory _minute = _formatOctalNumbers(_minuteUint);
+        string memory _dayOfWeek = _getDayOfWeek(_timestamp);
 
-        return Date(year, month, day, dayOfWeek, hour, _hour, minute, _minute);
+        return Date(_year, _month, _day, _dayOfWeek, _hour, _hourUint, _minute, _minuteUint);
     }
 
     function formatDate(Date memory _date) public pure returns (string memory) {
