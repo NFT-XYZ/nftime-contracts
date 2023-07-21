@@ -97,6 +97,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
                                 EXTERNAL
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev The received ETH stays in this contract address
+    receive() external payable {}
+
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
     /// @param _tokenUri Timestamp for minted NFTIME
