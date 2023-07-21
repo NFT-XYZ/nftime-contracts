@@ -12,36 +12,14 @@ import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ER
 
 import {Date, DateTime} from "./utils/DateTime.sol";
 
-/**
- *     c00l         ,k0d.  c0000000000000000d.  c000000000000000d.
- *     oMMO:;'      :XM0'  dMMXkxkxxxxxxxxxkl.  ;kkxxxONMWKxxxxxl.
- *     dMMMWM0'     :XM0'  dMMx.                      .OMNc
- *     dMM0l:codl.  :XM0'  dMMd.                      .OMN:
- *     dMMx. .xXKc..cNM0'  dMMx..........             .OMN:
- *     dMMd   ..'o00XWM0'  dMMNK000000000l            .OMN:
- *     dMMd.     ;xx0WM0'  dMMXkxkxxxxxxk:            .OMN:
- *     dMMd.        :XM0'  dMMx.                      .OMN:
- *     dMMd         :XM0'  dMMd                       .OMN:
- *     dMMd         :XM0'  dMMd                       .OMN:
- *     dMMd         :XM0'  dMMd                       .OMN:
- *     ;xx:         'dkl.  ;xx:                       .lkd'
- *
- *      ...............     ..             .     ...............
- *     c000000000000000d.  c00c          ,k0d.  c000000000000000d.
- *     ;xxxkxONMWKxkxxkl.  dMMO:,'    .;,dNM0'  dMMXkxxxxxxkkxxkl.
- *           .OMNc         oMMMWM0'   dWMMMM0'  dMMx.
- *           .OMN:         dMM0l:codoolccxNM0'  dMMd
- *           .OMN:         dMMd. .xNXK;  :NM0'  dMMx.........
- *           .OMN:         dMMx.  ....   :NM0'  dMMNK00000000c
- *           .OMN:         dMMx.         :NM0'  dMMXkxxxxxxxx:
- *           .OMN:         dMMx.         :NM0'  dMMx.
- *           .OMN:         dMMx.         :NM0'  dMMd.
- *      .....,0MNl.....    dMMd          :XM0'  dMMx............
- *     c00000KWMMX00000d.  dMMd          :XM0'  dMMNK00000000000d.
- *     ;xxxxxxxxxxkkxxkl.  ;xk:          'dkl.  ;xxxxxxxxxxxxxxkl.
- *
- */
-
+///
+///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
+///  ████╗  ██║██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝
+///  ██╔██╗ ██║█████╗     ██║   ██║██╔████╔██║█████╗
+///  ██║╚██╗██║██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝
+///  ██║ ╚████║██║        ██║   ██║██║ ╚═╝ ██║███████╗
+///  ╚═╝  ╚═══╝╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝
+///
 /// @title NFTIME
 /// @author https://nftxyz.art/ (Olivier Winkler)
 /// @notice MINT YOUR MINUTE
