@@ -57,8 +57,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     enum Type {
         Minute,
-        Day,
-        Rarity
+        Day
     }
 
     /*//////////////////////////////////////////////////////////////
