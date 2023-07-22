@@ -77,6 +77,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Mapps TokenId to the associated minted Timestamp (e.g. 1 -> 946681200)
     mapping(uint256 tokenId => uint256 timestamp) private s_tokenIdToTimeStamp;
 
+    /// @dev Mapps TokenId to rarity (true / false)
+    mapping(uint256 tokenId => bool rarity) private s_rarities;
+
     /// @dev Mapps the minted formatted Date to minted (e.g. 01.JAN 2030 12:00 -> true / false)
     mapping(string date => bool minted) private s_mintedMinutes;
 
@@ -131,6 +134,19 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         }
 
         s_tokenIdToTimeStamp[newItemId] = _time;
+
+        _setTokenURI(newItemId, _tokenUri);
+    }
+
+    /// @dev Mint Rarity NFTIME
+    /// @param _tokenUri Timestamp for minted NFTIME
+    function mintRarity(string memory _tokenUri) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
+        s_tokenIds.increment();
+        uint256 newItemId = s_tokenIds.current();
+
+        _mint(msg.sender, newItemId);
+
+        s_rarities[newItemId] = true;
 
         _setTokenURI(newItemId, _tokenUri);
     }
