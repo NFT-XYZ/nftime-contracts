@@ -78,7 +78,10 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     mapping(uint256 tokenId => uint256 timestamp) private s_tokenIdToTimeStamp;
 
     /// @dev Mapps the minted formatted Date to minted (e.g. 01.JAN 2030 12:00 -> true / false)
-    mapping(string date => bool minted) private s_mintedTimes;
+    mapping(string date => bool minted) private s_mintedMinutes;
+
+    /// @dev Mapps the minted formatted Date to minted (e.g. 01.JAN 2030 -> true / false)
+    mapping(string date => bool minted) private s_mintedDays;
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -115,13 +118,18 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         Date memory ts = i_dateTimeUtil.timestampToDateTime(_time);
         string memory date = i_dateTimeUtil.formatDate(ts);
 
-        if (s_mintedTimes[date] == true) {
+        if (s_mintedMinutes[date] == true || s_mintedDays[date] == true) {
             revert NFTIME__TimeAlreadyMinted();
         }
 
         _mint(msg.sender, newItemId);
 
-        s_mintedTimes[date] = true;
+        if (_type == Type.Day) {
+            s_mintedDays[date] = true;
+        } else {
+            s_mintedMinutes[date] = true;
+        }
+
         s_tokenIdToTimeStamp[newItemId] = _time;
 
         _setTokenURI(newItemId, _tokenUri);
