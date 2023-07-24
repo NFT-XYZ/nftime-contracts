@@ -17,7 +17,7 @@ struct Date {
     uint256 minuteUint;
 }
 
-contract DateTime {
+library DateTime {
     uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
     uint256 private constant SECONDS_PER_HOUR = 60 * 60;
     uint256 private constant SECONDS_PER_MINUTE = 60;

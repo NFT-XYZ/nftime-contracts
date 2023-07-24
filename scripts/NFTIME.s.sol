@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import {Script} from "forge-std/Script.sol";
 import {NFTIME} from "../src/NFTIME.sol";
-import {DateTime} from "../src/utils/DateTime.sol";
+import {DateTime} from "../src/libraries/DateTime.sol";
 
 contract CounterScript is Script {
     function setUp() public {}

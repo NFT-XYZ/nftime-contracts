@@ -10,7 +10,7 @@ import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
-import {Date, DateTime} from "./utils/DateTime.sol";
+import {Date, DateTime} from "./libraries/DateTime.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -70,9 +70,6 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Thrown if the sent amount of ethers isn't equal to price
     string private s_contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
 
-    /// @dev Thrown if the sent amount of ethers isn't equal to price
-    DateTime private immutable i_dateTimeUtil = new DateTime();
-
     /// @dev Mapps TokenId to the associated minted Timestamp (e.g. 1 -> 946681200)
     mapping(uint256 tokenId => uint256 timestamp) private s_tokenIdToTimeStamp;
 
@@ -117,8 +114,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokenIds.increment();
         uint256 newItemId = s_tokenIds.current();
 
-        Date memory ts = i_dateTimeUtil.timestampToDateTime(_time);
-        string memory date = i_dateTimeUtil.formatDate(ts);
+        Date memory ts = DateTime.timestampToDateTime(_time);
+        string memory date = DateTime.formatDate(ts);
 
         if (s_mintedMinutes[date] == true || s_mintedDays[date] == true) {
             revert NFTIME__TimeAlreadyMinted();

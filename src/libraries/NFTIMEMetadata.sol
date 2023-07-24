@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-import {Date} from "../utils/DateTime.sol";
+import {Date} from "./DateTime.sol";
 
 library NFTIMEMetadata {
     /// @dev Render the JSON atributes for a given Checks token.
