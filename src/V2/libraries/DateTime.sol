@@ -17,11 +17,33 @@ struct Date {
     uint256 minuteUint;
 }
 
-contract DateTime {
+// TODO Comments
+library DateTime {
     uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
     uint256 private constant SECONDS_PER_HOUR = 60 * 60;
     uint256 private constant SECONDS_PER_MINUTE = 60;
     int256 private constant OFFSET19700101 = 2440588;
+
+    string private constant WEEKDAY_MON = "MON";
+    string private constant WEEKDAY_TUE = "TUE";
+    string private constant WEEKDAY_WED = "WED";
+    string private constant WEEKDAY_THU = "THU";
+    string private constant WEEKDAY_FRI = "FRI";
+    string private constant WEEKDAY_SAT = "SAT";
+    string private constant WEEKDAY_SUN = "SUN";
+
+    string private constant MONTH_JAN = "JAN";
+    string private constant MONTH_FEB = "FEB";
+    string private constant MONTH_MAR = "MAR";
+    string private constant MONTH_APR = "APR";
+    string private constant MONTH_MAY = "MAY";
+    string private constant MONTH_JUN = "JUN";
+    string private constant MONTH_JUL = "JUL";
+    string private constant MONTH_AUG = "AUG";
+    string private constant MONTH_SEP = "SEP";
+    string private constant MONTH_OCT = "OCT";
+    string private constant MONTH_NOV = "NOV";
+    string private constant MONTH_DEC = "DEC";
 
     function timestampToDateTime(uint256 _timestamp) public pure returns (Date memory) {
         (uint256 _year, string memory _month, string memory _day) = _daysToDate(_timestamp / SECONDS_PER_DAY);
@@ -71,29 +93,29 @@ contract DateTime {
         uint256 _days = _timestamp / SECONDS_PER_DAY;
         uint256 dayOfWeek = ((_days + 3) % 7) + 1;
 
-        if (dayOfWeek == 1) return "MON";
-        if (dayOfWeek == 2) return "TUE";
-        if (dayOfWeek == 3) return "WED";
-        if (dayOfWeek == 4) return "THU";
-        if (dayOfWeek == 5) return "FRI";
-        if (dayOfWeek == 6) return "SAT";
-        if (dayOfWeek == 7) return "SUN";
+        if (dayOfWeek == 1) return WEEKDAY_MON;
+        if (dayOfWeek == 2) return WEEKDAY_TUE;
+        if (dayOfWeek == 3) return WEEKDAY_WED;
+        if (dayOfWeek == 4) return WEEKDAY_THU;
+        if (dayOfWeek == 5) return WEEKDAY_FRI;
+        if (dayOfWeek == 6) return WEEKDAY_SAT;
+        if (dayOfWeek == 7) return WEEKDAY_SUN;
 
         return "";
     }
 
     function _getMonthByNumber(uint256 _month) internal pure returns (string memory month) {
-        if (_month == 1) return "JAN";
-        if (_month == 2) return "FEB";
-        if (_month == 3) return "MAR";
-        if (_month == 4) return "APR";
-        if (_month == 5) return "MAY";
-        if (_month == 6) return "JUN";
-        if (_month == 7) return "JUL";
-        if (_month == 8) return "AUG";
-        if (_month == 9) return "SEP";
-        if (_month == 10) return "OCT";
-        if (_month == 11) return "NOV";
-        if (_month == 12) return "DEC";
+        if (_month == 1) return MONTH_JAN;
+        if (_month == 2) return MONTH_FEB;
+        if (_month == 3) return MONTH_MAR;
+        if (_month == 4) return MONTH_APR;
+        if (_month == 5) return MONTH_MAY;
+        if (_month == 6) return MONTH_JUN;
+        if (_month == 7) return MONTH_JUL;
+        if (_month == 8) return MONTH_AUG;
+        if (_month == 9) return MONTH_SEP;
+        if (_month == 10) return MONTH_OCT;
+        if (_month == 11) return MONTH_NOV;
+        if (_month == 12) return MONTH_DEC;
     }
 }

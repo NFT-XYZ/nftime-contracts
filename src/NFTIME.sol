@@ -11,7 +11,6 @@ import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ER
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
 import {Date, DateTime} from "./libraries/DateTime.sol";
-import {NFTIMEMetadata} from "./libraries/NFTIMEMetadata.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -104,8 +103,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
-    /// @param _type Timestamp for minted NFTIME
-    function mint(uint256 _time, Type _type) external payable whenNotPaused {
+    /// @param _tokenUri Timestamp for minted NFTIME
+    function mint(uint256 _time, string memory _tokenUri, Type _type) external payable whenNotPaused {
         uint256 _price = _type == Type.Day ? NFTIME_DAY_PRICE : NFTIME_MINUTE_PRICE;
 
         if (msg.value != _price) {
@@ -115,24 +114,22 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokenIds.increment();
         uint256 newItemId = s_tokenIds.current();
 
-        Date memory _date = DateTime.timestampToDateTime(_time);
-        string memory _dateString = DateTime.formatDate(_date);
+        Date memory ts = DateTime.timestampToDateTime(_time);
+        string memory date = DateTime.formatDate(ts);
 
-        if (s_mintedMinutes[_dateString] == true || s_mintedDays[_dateString] == true) {
+        if (s_mintedMinutes[date] == true || s_mintedDays[date] == true) {
             revert NFTIME__TimeAlreadyMinted();
         }
 
         _mint(msg.sender, newItemId);
 
         if (_type == Type.Day) {
-            s_mintedDays[_dateString] = true;
+            s_mintedDays[date] = true;
         } else {
-            s_mintedMinutes[_dateString] = true;
+            s_mintedMinutes[date] = true;
         }
 
         s_tokenIdToTimeStamp[newItemId] = _time;
-
-        string memory _tokenUri = NFTIMEMetadata.generateTokenURI(_date);
 
         _setTokenURI(newItemId, _tokenUri);
     }
@@ -187,8 +184,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         _unpause();
     }
 
-    function getNftTest(Date memory _time) external view returns (string memory) {
-        return NFTIMEMetadata.generateTokenURI(_time);
+    /// @notice Get Timestamp by TokenId
+    function getTimestampByTokenId(uint256 _tokenId) external view returns (uint256) {
+        return s_tokenIdToTimeStamp[_tokenId];
     }
 
     /// @dev IPFS Link to Opensea Collection Metadata.

@@ -10,7 +10,8 @@ import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
-import {Date, DateTime} from "./utils/DateTime.sol";
+import {Date, DateTime} from "./libraries/DateTime.sol";
+import {NFTIMEMetadata} from "./libraries/NFTIMEMetadata.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -70,9 +71,6 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Thrown if the sent amount of ethers isn't equal to price
     string private s_contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
 
-    /// @dev Thrown if the sent amount of ethers isn't equal to price
-    DateTime private immutable i_dateTimeUtil = new DateTime();
-
     /// @dev Mapps TokenId to the associated minted Timestamp (e.g. 1 -> 946681200)
     mapping(uint256 tokenId => uint256 timestamp) private s_tokenIdToTimeStamp;
 
@@ -106,8 +104,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
-    /// @param _tokenUri Timestamp for minted NFTIME
-    function mint(uint256 _time, string memory _tokenUri, Type _type) external payable whenNotPaused {
+    /// @param _type Timestamp for minted NFTIME
+    function mint(uint256 _time, Type _type) external payable whenNotPaused {
         uint256 _price = _type == Type.Day ? NFTIME_DAY_PRICE : NFTIME_MINUTE_PRICE;
 
         if (msg.value != _price) {
@@ -117,22 +115,24 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokenIds.increment();
         uint256 newItemId = s_tokenIds.current();
 
-        Date memory ts = i_dateTimeUtil.timestampToDateTime(_time);
-        string memory date = i_dateTimeUtil.formatDate(ts);
+        Date memory _date = DateTime.timestampToDateTime(_time);
+        string memory _dateString = DateTime.formatDate(_date);
 
-        if (s_mintedMinutes[date] == true || s_mintedDays[date] == true) {
+        if (s_mintedMinutes[_dateString] == true || s_mintedDays[_dateString] == true) {
             revert NFTIME__TimeAlreadyMinted();
         }
 
         _mint(msg.sender, newItemId);
 
         if (_type == Type.Day) {
-            s_mintedDays[date] = true;
+            s_mintedDays[_dateString] = true;
         } else {
-            s_mintedMinutes[date] = true;
+            s_mintedMinutes[_dateString] = true;
         }
 
         s_tokenIdToTimeStamp[newItemId] = _time;
+
+        string memory _tokenUri = NFTIMEMetadata.generateTokenURI(_date);
 
         _setTokenURI(newItemId, _tokenUri);
     }

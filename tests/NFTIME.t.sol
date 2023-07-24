@@ -17,11 +17,4 @@ contract NFTIMETest is Test {
 
         vm.stopBroadcast();
     }
-
-    function test_svgNft() public {
-        // Date memory ts = DateTime.timestampToDateTime(1893495600);
-
-        // nftime.getNftTest(ts);
-        nftime.mint{value: 0.01 ether}(1893495600, NFTIME.Type.Minute);
-    }
 }
