@@ -11,6 +11,7 @@ import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ER
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
 import {Date, DateTime} from "./libraries/DateTime.sol";
+import {NFTIMEMetadata} from "./libraries/NFTIMEMetadata.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -182,6 +183,10 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Resume Minting
     function resumeTransactions() external onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
+    }
+
+    function getNftTest(Date memory _time) external view returns (string memory) {
+        return NFTIMEMetadata.generateTokenURI(_time);
     }
 
     /// @dev IPFS Link to Opensea Collection Metadata.

@@ -1,11 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Date} from "./DateTime.sol";
+import {NFTIMEArt} from "./NFTIMEArt.sol";
 
 library NFTIMEMetadata {
+    /// @dev Render the JSON Metadata for a given Checks token.
+    /// @param _date The DB containing all checks.
+    function generateTokenURI(Date memory _date) public pure returns (string memory) {
+        bytes memory svg = NFTIMEArt.generateSVG(_date);
+
+        /// forgefmt: disable-start
+        bytes memory metadata = abi.encodePacked(
+            "{",
+                '"name": "Checks"',
+                '"description": "This artwork may or may not be notable.",',
+                '"image": ',
+                    '"data:image/svg+xml;base64,',
+                    Base64.encode(svg),
+                    '",',
+                '"attributes": [', 
+                    getAttributes(_date, false),
+                "]",
+            "}"
+        );
+        /// forgefmt: disable-end
+
+        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(metadata)));
+    }
+
     /// @dev Render the JSON atributes for a given Checks token.
     /// @param _date The check to render.
     /// @param _isRarity The check to render.
