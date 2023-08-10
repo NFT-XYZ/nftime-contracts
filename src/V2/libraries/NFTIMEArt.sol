@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-import {NFTIMEArtStyles} from "./NFTIMEArtStyles.sol";
+import {HelveticaNowFont} from "./HelveticaNowFont.sol";
 import {Date} from "./DateTime.sol";
 
 library NFTIMEArt {
@@ -18,7 +18,7 @@ library NFTIMEArt {
                 'height="1000" ',
                 'style="background:black;"',
             '>',
-                NFTIMEArtStyles.generateStyles(),
+                generateStyles(),
                 '<path fill="none" stroke="black" d="M0 0h1000.8v1000.8H0z"/>',
                 _fillDateAttributes(_date),
                 '<path fill="none" stroke="#000" d="M520 620h200m40 0h200M520 860h440M520 380h440M520 140h440M40 260h440"/>',
@@ -26,6 +26,25 @@ library NFTIMEArt {
                 '<path fill="none" stroke="#fff" d="M960 220c0 11-9 20-20 20H540c-11 0-20-9-20-20V60c0-11 9-20 20-20h400c11 0 20 9 20 20v160zm0 240c0 11-9 20-20 20H540c-11 0-20-9-20-20V300c0-11 9-20 20-20h400c11 0 20 9 20 20v160zM720 700c0 11-9 20-20 20H540c-11 0-20-9-20-20V540c0-11 9-20 20-20h160c11 0 20 9 20 20v160zm240 0c0 11-9 20-20 20H780c-11 0-20-9-20-20V540c0-11 9-20 20-20h160c11 0 20 9 20 20v160zm0 240c0 11-9 20-20 20H540c-11 0-20-9-20-20V780c0-11 9-20 20-20h400c11 0 20 9 20 20v160zM480 460c0 11-9 20-20 20H60c-11 0-20-9-20-20V60c0-11 9-20 20-20h400c11 0 20 9 20 20v400zm0 480c0 11-9 20-20 20H60c-11 0-20-9-20-20V540c0-11 9-20 20-20h400c11 0 20 9 20 20v400z" />'
                 '<path fill="none" stroke="#fff" d="M350.5 745.9c0 2.2-1.8 4-4 4h-12c-2.2 0-4-1.8-4-4v-12c0-2.2 1.8-4 4-4h12c2.2 0 4 1.8 4 4v12z" />'
             '</svg>'
+        );
+        /// forgefmt: disable-end
+    }
+
+    function generateStyles() public pure returns (string memory) {
+        /// forgefmt: disable-start
+        return string.concat(
+            '<defs>',
+                '<style>',
+                    '@font-face { font-family:"HelveticaNowDisplayMd";',
+                    'src: url("',
+                        HelveticaNowFont.HELVETICA_NOW_FONT,
+                    '")}',
+                    '.container { height: 100%; display: flex; align-items: center; justify-content: center; }',
+                    'p { font-family: "HelveticaNowDisplayMd"; color: white; margin: 0; }',
+                    '@keyframes rotation { from { transform: rotate(0deg); transform-origin: 50% 50%; } to { transform: rotate(360deg); transform-origin: 50% 50%; } }',
+                    '#hand-s-use { animation: rotation 60s infinite steps(60); }',
+                '</style>',
+            '</defs>'
         );
         /// forgefmt: disable-end
     }

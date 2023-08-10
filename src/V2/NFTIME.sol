@@ -9,9 +9,11 @@ import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Date, DateTime} from "./libraries/DateTime.sol";
-import {NFTIMEMetadata} from "./libraries/NFTIMEMetadata.sol";
+import {NFTIMEArt} from "./libraries/NFTIMEArt.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -132,7 +134,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
         s_tokenIdToTimeStamp[newItemId] = _time;
 
-        string memory _tokenUri = NFTIMEMetadata.generateTokenURI(_date);
+        string memory _tokenUri = _generateTokenURI(_date);
 
         _setTokenURI(newItemId, _tokenUri);
     }
@@ -191,6 +193,62 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @return Returns contractUri
     function contractURI() external view returns (string memory) {
         return s_contractUri;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                INTERNAL
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Render the JSON Metadata for a given Checks token.
+    /// @param _date The DB containing all checks.
+    function _generateTokenURI(Date memory _date) internal pure returns (string memory) {
+        bytes memory svg = NFTIMEArt.generateSVG(_date);
+
+        /// forgefmt: disable-start
+        bytes memory metadata = abi.encodePacked(
+            "{",
+                '"name": "Checks",',
+                '"description": "This artwork may or may not be notable.",',
+                '"image": ',
+                    '"data:image/svg+xml;base64,',
+                    Base64.encode(svg),
+                    '",',
+                '"attributes": [', 
+                    _getAttributes(_date, false),
+                "]",
+            "}"
+        );
+        /// forgefmt: disable-end
+
+        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(metadata)));
+    }
+
+    /// @dev Render the JSON atributes for a given Checks token.
+    /// @param _date The check to render.
+    /// @param _isRarity The check to render.
+    function _getAttributes(Date memory _date, bool _isRarity) internal pure returns (bytes memory) {
+        return abi.encodePacked(
+            _getTrait("Year", Strings.toString(_date.year), ","),
+            _getTrait("Month", _date.month, ","),
+            _getTrait("Day", _date.day, ","),
+            _getTrait("Week Day", _date.dayOfWeek, ","),
+            _getTrait("Hour", _date.hour, ","),
+            _getTrait("Minute", _date.minute, ","),
+            _getTrait("Rarity", _isRarity ? "true" : "false", "")
+        );
+    }
+
+    /// @dev Generate the SVG snipped for a single attribute.
+    /// @param traitType The `trait_type` for this trait.
+    /// @param traitValue The `value` for this trait.
+    /// @param append Helper to append a comma.
+    function _getTrait(string memory traitType, string memory traitValue, string memory append)
+        internal
+        pure
+        returns (string memory)
+    {
+        return
+            string(abi.encodePacked("{", '"trait_type": "', traitType, '",' '"value": "', traitValue, '"' "}", append));
     }
 
     /*//////////////////////////////////////////////////////////////
