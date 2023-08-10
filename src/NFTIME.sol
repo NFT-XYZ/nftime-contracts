@@ -189,6 +189,11 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         _unpause();
     }
 
+    /// @notice Get Timestamp by TokenId
+    function getTimestampByTokenId(uint256 _tokenId) external view returns (uint256) {
+        return s_tokenIdToTimeStamp[_tokenId];
+    }
+
     /// @dev IPFS Link to Opensea Collection Metadata.
     /// @return Returns contractUri
     function contractURI() external view returns (string memory) {
