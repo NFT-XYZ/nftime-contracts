@@ -5,7 +5,7 @@ import {Script} from "forge-std/Script.sol";
 import {NFTIME} from "../src/NFTIME.sol";
 import {DateTime} from "../src/libraries/DateTime.sol";
 
-contract CounterScript is Script {
+contract DeployScript is Script {
     function setUp() public {}
 
     function run() public {
