@@ -18,6 +18,7 @@ library NFTIMEArt {
                 'height="1000" ',
                 'style="background:black;"',
             '>',
+                NFTIMEArtStyles.generateStyles(),
                 '<path fill="none" stroke="black" d="M0 0h1000.8v1000.8H0z"/>',
                 _fillDateAttributes(_date),
                 '<path fill="none" stroke="#000" d="M520 620h200m40 0h200M520 860h440M520 380h440M520 140h440M40 260h440"/>',
