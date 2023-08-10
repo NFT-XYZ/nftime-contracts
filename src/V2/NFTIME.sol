@@ -9,11 +9,8 @@ import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
-import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Date, DateTime} from "./libraries/DateTime.sol";
-import {NFTIMEArt} from "./libraries/NFTIMEArt.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -106,8 +103,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
-    /// @param _type Timestamp for minted NFTIME
-    function mint(uint256 _time, Type _type) external payable whenNotPaused {
+    /// @param _tokenUri Timestamp for minted NFTIME
+    function mint(uint256 _time, string memory _tokenUri, Type _type) external payable whenNotPaused {
         uint256 _price = _type == Type.Day ? NFTIME_DAY_PRICE : NFTIME_MINUTE_PRICE;
 
         if (msg.value != _price) {
@@ -117,24 +114,22 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokenIds.increment();
         uint256 newItemId = s_tokenIds.current();
 
-        Date memory _date = DateTime.timestampToDateTime(_time);
-        string memory _dateString = DateTime.formatDate(_date);
+        Date memory ts = DateTime.timestampToDateTime(_time);
+        string memory date = DateTime.formatDate(ts);
 
-        if (s_mintedMinutes[_dateString] == true || s_mintedDays[_dateString] == true) {
+        if (s_mintedMinutes[date] == true || s_mintedDays[date] == true) {
             revert NFTIME__TimeAlreadyMinted();
         }
 
         _mint(msg.sender, newItemId);
 
         if (_type == Type.Day) {
-            s_mintedDays[_dateString] = true;
+            s_mintedDays[date] = true;
         } else {
-            s_mintedMinutes[_dateString] = true;
+            s_mintedMinutes[date] = true;
         }
 
         s_tokenIdToTimeStamp[newItemId] = _time;
-
-        string memory _tokenUri = _generateTokenURI(_date);
 
         _setTokenURI(newItemId, _tokenUri);
     }
@@ -189,66 +184,15 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         _unpause();
     }
 
+    /// @notice Get Timestamp by TokenId
+    function getTimestampByTokenId(uint256 _tokenId) external view returns (uint256) {
+        return s_tokenIdToTimeStamp[_tokenId];
+    }
+
     /// @dev IPFS Link to Opensea Collection Metadata.
     /// @return Returns contractUri
     function contractURI() external view returns (string memory) {
         return s_contractUri;
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                                INTERNAL
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev Render the JSON Metadata for a given Checks token.
-    /// @param _date The DB containing all checks.
-    function _generateTokenURI(Date memory _date) internal pure returns (string memory) {
-        bytes memory svg = NFTIMEArt.generateSVG(_date);
-
-        /// forgefmt: disable-start
-        bytes memory metadata = abi.encodePacked(
-            "{",
-                '"name": "Checks",',
-                '"description": "This artwork may or may not be notable.",',
-                '"image": ',
-                    '"data:image/svg+xml;base64,',
-                    Base64.encode(svg),
-                    '",',
-                '"attributes": [', 
-                    _getAttributes(_date, false),
-                "]",
-            "}"
-        );
-        /// forgefmt: disable-end
-
-        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(metadata)));
-    }
-
-    /// @dev Render the JSON atributes for a given Checks token.
-    /// @param _date The check to render.
-    /// @param _isRarity The check to render.
-    function _getAttributes(Date memory _date, bool _isRarity) internal pure returns (bytes memory) {
-        return abi.encodePacked(
-            _getTrait("Year", Strings.toString(_date.year), ","),
-            _getTrait("Month", _date.month, ","),
-            _getTrait("Day", _date.day, ","),
-            _getTrait("Week Day", _date.dayOfWeek, ","),
-            _getTrait("Hour", _date.hour, ","),
-            _getTrait("Minute", _date.minute, ","),
-            _getTrait("Rarity", _isRarity ? "true" : "false", "")
-        );
-    }
-
-    /// @dev Generate the SVG snipped for a single attribute.
-    /// @param traitType The `trait_type` for this trait.
-    /// @param traitValue The `value` for this trait.
-    /// @param append Helper to append a comma.
-    function _getTrait(string memory traitType, string memory traitValue, string memory append)
-        internal
-        pure
-        returns (string memory)
-    {
-        return
-            string(abi.encodePacked("{", '"trait_type": "', traitType, '",' '"value": "', traitValue, '"' "}", append));
     }
 
     /*//////////////////////////////////////////////////////////////
