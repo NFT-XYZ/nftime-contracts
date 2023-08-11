@@ -133,10 +133,6 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         }
 
         s_tokenIdToTimeStamp[newItemId] = _time;
-
-        string memory _tokenUri = _generateTokenURI(_date);
-
-        _setTokenURI(newItemId, _tokenUri);
     }
 
     /// @dev Mint Rarity NFTIME
@@ -189,15 +185,19 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         _unpause();
     }
 
-    /// @notice Get Timestamp by TokenId
-    function getTimestampByTokenId(uint256 _tokenId) external view returns (uint256) {
-        return s_tokenIdToTimeStamp[_tokenId];
-    }
-
     /// @dev IPFS Link to Opensea Collection Metadata.
     /// @return Returns contractUri
     function contractURI() external view returns (string memory) {
         return s_contractUri;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                PUBLIC
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice Get Timestamp by TokenId
+    function getTimestampByTokenId(uint256 _tokenId) public view returns (uint256) {
+        return s_tokenIdToTimeStamp[_tokenId];
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -270,7 +270,22 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return super.tokenURI(_tokenId);
+        Date memory _date = DateTime.timestampToDateTime(getTimestampByTokenId(_tokenId));
+
+        return _generateTokenURI(_date);
+    }
+
+    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
+    /// @dev Function can only be when Contract is not paused
+    /// @param interfaceId Sender's Address
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControl, ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     /// @notice Function to be invoked before every token transfer (mint, burn, ...)
@@ -291,18 +306,5 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @param _tokenId Sender's Address
     function _burn(uint256 _tokenId) internal override(ERC721, ERC721URIStorage) whenNotPaused {
         super._burn(_tokenId);
-    }
-
-    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
-    /// @dev Function can only be when Contract is not paused
-    /// @param interfaceId Sender's Address
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(AccessControl, ERC721, ERC721Enumerable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
     }
 }
