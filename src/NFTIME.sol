@@ -55,12 +55,23 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     uint256 private constant NFTIME_DAY_PRICE = 0.1 ether;
 
     /*//////////////////////////////////////////////////////////////
+                                STRUCTS
+    //////////////////////////////////////////////////////////////*/
+
+    struct TokenStruct {
+        uint256 timestamp;
+        bool rarity;
+        Type nftType;
+    }
+
+    /*//////////////////////////////////////////////////////////////
                                 ENUMS
     //////////////////////////////////////////////////////////////*/
 
     enum Type {
         Minute,
-        Day
+        Day,
+        Rarity
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -73,11 +84,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Thrown if the sent amount of ethers isn't equal to price
     string private s_contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
 
-    /// @dev Mapps TokenId to the associated minted Timestamp (e.g. 1 -> 946681200)
-    mapping(uint256 tokenId => uint256 timestamp) private s_tokenIdToTimeStamp;
-
     /// @dev Mapps TokenId to rarity (true / false)
-    mapping(uint256 tokenId => bool rarity) private s_rarities;
+    mapping(uint256 tokenId => TokenStruct token) private s_tokens;
 
     /// @dev Mapps the minted formatted Date to minted (e.g. 01.JAN 2030 12:00 -> true / false)
     mapping(string date => bool minted) private s_mintedMinutes;
@@ -108,7 +116,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @param _time Timestamp for minted NFTIME
     /// @param _type Timestamp for minted NFTIME
     function mint(uint256 _time, Type _type) external payable whenNotPaused returns (uint256) {
-        uint256 _price = _type == Type.Day ? NFTIME_DAY_PRICE : NFTIME_MINUTE_PRICE;
+        bool _isMinute = _type == Type.Minute;
+
+        uint256 _price = _isMinute ? NFTIME_MINUTE_PRICE : NFTIME_DAY_PRICE;
 
         if (msg.value != _price) {
             revert NFTIME__NotEnoughEtherSent(msg.value);
@@ -118,7 +128,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         uint256 _newItemId = s_tokenIds.current();
 
         Date memory _date = DateTime.timestampToDateTime(_time);
-        string memory _dateString = DateTime.formatDate(_date);
+        string memory _dateString = DateTime.formatDate(_date, _isMinute);
 
         if (s_mintedMinutes[_dateString] == true || s_mintedDays[_dateString] == true) {
             revert NFTIME__TimeAlreadyMinted();
@@ -126,13 +136,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
         _mint(msg.sender, _newItemId);
 
-        if (_type == Type.Day) {
-            s_mintedDays[_dateString] = true;
-        } else {
-            s_mintedMinutes[_dateString] = true;
-        }
+        _isMinute ? s_mintedDays[_dateString] = true : s_mintedMinutes[_dateString] = true;
 
-        s_tokenIdToTimeStamp[_newItemId] = _time;
+        s_tokens[_newItemId] = TokenStruct({timestamp: _time, rarity: false, nftType: _type});
 
         return _newItemId;
     }
@@ -145,7 +151,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
         _mint(msg.sender, _newItemId);
 
-        s_rarities[_newItemId] = true;
+        s_tokens[_newItemId] = TokenStruct({timestamp: 0, rarity: true, nftType: Type.Rarity});
 
         _setTokenURI(_newItemId, _tokenUri);
     }
@@ -198,8 +204,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Get Timestamp by TokenId
-    function getTimestampByTokenId(uint256 _tokenId) public view returns (uint256) {
-        return s_tokenIdToTimeStamp[_tokenId];
+    function getTimestampByTokenId(uint256 _tokenId) public view returns (TokenStruct memory) {
+        return s_tokens[_tokenId];
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -216,9 +222,11 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        Date memory _date = DateTime.timestampToDateTime(getTimestampByTokenId(_tokenId));
+        TokenStruct memory _tokenStruct = getTimestampByTokenId(_tokenId);
 
-        return NFTIMEMetadata.generateTokenURI(_date, true);
+        Date memory _date = DateTime.timestampToDateTime(_tokenStruct.timestamp);
+
+        return NFTIMEMetadata.generateTokenURI(_date, _tokenStruct.nftType == Type.Minute);
     }
 
     /// @notice Function to be invoked before every token transfer (mint, burn, ...)

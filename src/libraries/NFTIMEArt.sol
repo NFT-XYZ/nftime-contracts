@@ -54,6 +54,9 @@ library NFTIMEArt {
     string private constant PATH_CLOCK_SECOND_HAND =
         '<path fill="#fff" fillRule="evenodd" id="hand-s-use" d="M284.201 283V53.224h-2.402V283l-1.001 36.928v22.618h4.404v-22.618L284.201 283z" clipRule="evenodd" />';
 
+    string private constant PATHS_DAY_NFT =
+        '<path d="M520,380H960M520,140H960M40,260H480" fill="none" stroke="#000" stroke-width="1" /><path d="M960,220a20.059,20.059,0,0,1-20,20H540a20.059,20.059,0,0,1-20-20V60a20.059,20.059,0,0,1,20-20H940a20.059,20.059,0,0,1,20,20Zm0,240a20.059,20.059,0,0,1-20,20H540a20.059,20.059,0,0,1-20-20V300a20.059,20.059,0,0,1,20-20H940a20.059,20.059,0,0,1,20,20Zm-480,0a20.059,20.059,0,0,1-20,20H60a20.059,20.059,0,0,1-20-20V60A20.059,20.059,0,0,1,60,40H460a20.059,20.059,0,0,1,20,20Z" fill="none" stroke="#fff" stroke-width="1" />';
+
     /*//////////////////////////////////////////////////////////////
                                 PUBLIC
     //////////////////////////////////////////////////////////////*/
@@ -70,7 +73,7 @@ library NFTIMEArt {
                 'style="background:black;"',
             '>',
                 STYLES,
-                _generateContent(_date, _isMinute),
+                _isMinute ? _generateMinuteContent(_date) : _generateDayContent(_date),
             '</svg>'
         );
         /// forgefmt: disable-end
@@ -82,12 +85,11 @@ library NFTIMEArt {
 
     /// @notice Generate the complete SVG code for a given Check.
     /// @param _date The check to render.
-    /// @param _isMinute The check to render.
-    function _generateContent(Date memory _date, bool _isMinute) internal pure returns (string memory) {
+    function _generateMinuteContent(Date memory _date) internal pure returns (string memory) {
         return string.concat(
-            _fillDateAttributes(_date),
-            _isMinute ? _generateClock(_date) : "",
-            _isMinute ? PATH_SMALL_DATE_OUTLINE : "",
+            _fillDateAttributes(_date, true),
+            _generateClock(_date),
+            PATH_SMALL_DATE_OUTLINE,
             PATH_LINE_THROUGH,
             PATH_OUTLINE
         );
@@ -95,16 +97,25 @@ library NFTIMEArt {
 
     /// @notice Generate the complete SVG code for a given Check.
     /// @param _date The check to render.
-    function _fillDateAttributes(Date memory _date) internal pure returns (string memory) {
+    function _generateDayContent(Date memory _date) internal pure returns (string memory) {
         return string.concat(
-            _fillDateAttribute("720", "520", "200", "40", "126", ":"),
-            _fillDateAttribute("520", "520", "200", "200", "142", _date.hour),
-            _fillDateAttribute("760", "520", "200", "200", "142", _date.minute),
-            _fillDateAttribute("520", "760", "200", "440", "138", _date.dayOfWeek),
+            '<g transform="translate(0.4 240.4)">', _fillDateAttributes(_date, false), PATHS_DAY_NFT, "</g>"
+        );
+    }
+
+    /// @notice Generate the complete SVG code for a given Check.
+    /// @param _date The check to render.
+    /// @param _isMinute The check to render.
+    function _fillDateAttributes(Date memory _date, bool _isMinute) internal pure returns (string memory) {
+        return string.concat(
+            _isMinute ? _fillDateAttribute("720", "520", "200", "40", "126", ":") : "",
+            _isMinute ? _fillDateAttribute("520", "520", "200", "200", "142", _date.hour) : "",
+            _isMinute ? _fillDateAttribute("760", "520", "200", "200", "142", _date.minute) : "",
+            _isMinute ? _fillDateAttribute("520", "760", "200", "440", "138", _date.dayOfWeek) : "",
             _fillDateAttribute("520", "40", "200", "440", "142", Strings.toString(_date.year)),
             _fillDateAttribute("520", "280", "200", "440", "142", _date.month),
             _fillDateAttribute("40", "40", "440", "440", "360", _date.day),
-            _fillDateAttribute("330", "730", "20", "20", "11", _date.day)
+            _isMinute ? _fillDateAttribute("330", "730", "20", "20", "11", _date.day) : ""
         );
     }
 

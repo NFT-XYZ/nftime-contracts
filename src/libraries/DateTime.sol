@@ -71,10 +71,14 @@ library DateTime {
         return Date(_year, _month, _day, _dayOfWeek, _hour, _hourUint, _minute, _minuteUint);
     }
 
-    function formatDate(Date memory _date) public pure returns (string memory) {
-        return string.concat(
-            _date.day, " ", _date.month, " ", Strings.toString(_date.year), " ", _date.hour, ":", _date.minute
-        );
+    function formatDate(Date memory _date, bool _isMinute) public pure returns (string memory) {
+        string memory _name = string.concat(_date.day, " ", _date.month, " ", Strings.toString(_date.year));
+
+        if (_isMinute) {
+            _name = string.concat(_name, " ", _date.hour, ":", _date.minute);
+        }
+
+        return _name;
     }
 
     function _daysToDate(uint256 _days) internal pure returns (uint256 year, string memory month, string memory day) {

@@ -1,17 +1,9 @@
 {
   "extends": "solhint:recommended",
   "rules": {
-    "code-complexity": [
-      "error",
-      8
-    ],
-    "compiler-version": [
-      "error",
-      ">=0.8.18"
-    ],
-    "max-line-length": [
-      "off"
-    ],
+    "code-complexity": ["error", 8],
+    "compiler-version": ["error", ">=0.8.18"],
+    "max-line-length": ["off"],
     "var-name-mixedcase": "off",
     "func-name-mixedcase": "off",
     "no-console": "off",

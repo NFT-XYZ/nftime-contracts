@@ -28,7 +28,7 @@ library NFTIMEMetadata {
     /// @param _date The DB containing all checks.
     function generateTokenURI(Date memory _date, bool _isMinute) public pure returns (string memory) {
         bytes memory _svg = NFTIMEArt.generateSVG(_date, _isMinute);
-        string memory _name = DateTime.formatDate(_date);
+        string memory _name = DateTime.formatDate(_date, _isMinute);
 
         /// forgefmt: disable-start
         bytes memory _metadata = abi.encodePacked(
@@ -42,7 +42,7 @@ library NFTIMEMetadata {
                     Base64.encode(_svg),
                     '",',
                 '"attributes": [', 
-                    _getAttributes(_date, false),
+                    _getAttributes(_date, _isMinute),
                 "]",
             "}"
         );
@@ -57,16 +57,16 @@ library NFTIMEMetadata {
 
     /// @dev Render the JSON atributes for a given Checks token.
     /// @param _date The check to render.
-    /// @param _isRarity The check to render.
-    function _getAttributes(Date memory _date, bool _isRarity) internal pure returns (bytes memory) {
+    /// @param _isMinute The check to render.
+    function _getAttributes(Date memory _date, bool _isMinute) internal pure returns (bytes memory) {
         return abi.encodePacked(
             _getTrait("Year", Strings.toString(_date.year), ","),
             _getTrait("Month", _date.month, ","),
             _getTrait("Day", _date.day, ","),
-            _getTrait("Week Day", _date.dayOfWeek, ","),
-            _getTrait("Hour", _date.hour, ","),
-            _getTrait("Minute", _date.minute, ","),
-            _getTrait("Rarity", _isRarity ? "true" : "false", "")
+            _isMinute ? _getTrait("Week Day", _date.dayOfWeek, ",") : "",
+            _isMinute ? _getTrait("Hour", _date.hour, ",") : "",
+            _isMinute ? _getTrait("Minute", _date.minute, ",") : "",
+            _getTrait("Rarity", "false", "")
         );
     }
 
