@@ -209,16 +209,19 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Render the JSON Metadata for a given Checks token.
     /// @param _date The DB containing all checks.
     function _generateTokenURI(Date memory _date) internal pure returns (string memory) {
-        bytes memory svg = NFTIMEArt.generateSVG(_date);
+        bytes memory _svg = NFTIMEArt.generateSVG(_date);
+        string memory _name = DateTime.formatDate(_date);
 
         /// forgefmt: disable-start
-        bytes memory metadata = abi.encodePacked(
+        bytes memory _metadata = abi.encodePacked(
             "{",
-                '"name": "Checks",',
-                '"description": "This artwork may or may not be notable.",',
+                '"name": "',
+                _name,
+                '",',
+                '"description": "Collect your favourite Time. Set your time. Mint your minute!.",',
                 '"image": ',
                     '"data:image/svg+xml;base64,',
-                    Base64.encode(svg),
+                    Base64.encode(_svg),
                     '",',
                 '"attributes": [', 
                     _getAttributes(_date, false),
@@ -227,7 +230,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         );
         /// forgefmt: disable-end
 
-        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(metadata)));
+        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(_metadata)));
     }
 
     /// @dev Render the JSON atributes for a given Checks token.
