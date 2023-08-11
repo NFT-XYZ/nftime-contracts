@@ -18,6 +18,18 @@ struct Date {
 }
 
 // TODO Comments
+///
+///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
+///  ████╗  ██║██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝
+///  ██╔██╗ ██║█████╗     ██║   ██║██╔████╔██║█████╗
+///  ██║╚██╗██║██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝
+///  ██║ ╚████║██║        ██║   ██║██║ ╚═╝ ██║███████╗
+///  ╚═╝  ╚═══╝╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝
+///
+/// @title NFTIME
+/// @author https://nftxyz.art/ (Olivier Winkler)
+/// @notice MINT YOUR MINUTE
+/// @custom:security-contact abc@nftxyz.art
 library DateTime {
     uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
     uint256 private constant SECONDS_PER_HOUR = 60 * 60;

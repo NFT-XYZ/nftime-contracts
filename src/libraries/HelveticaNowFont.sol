@@ -1,6 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+///
+///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
+///  ████╗  ██║██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝
+///  ██╔██╗ ██║█████╗     ██║   ██║██╔████╔██║█████╗
+///  ██║╚██╗██║██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝
+///  ██║ ╚████║██║        ██║   ██║██║ ╚═╝ ██║███████╗
+///  ╚═╝  ╚═══╝╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝
+///
+/// @title NFTIME
+/// @author https://nftxyz.art/ (Olivier Winkler)
+/// @notice MINT YOUR MINUTE
+/// @custom:security-contact abc@nftxyz.art
 library HelveticaNowFont {
     /* solhint-disable */
     string public constant HELVETICA_NOW_FONT =

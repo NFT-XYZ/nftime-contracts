@@ -6,8 +6,24 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {HelveticaNowFont} from "./HelveticaNowFont.sol";
 import {Date} from "./DateTime.sol";
 
+///
+///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
+///  ████╗  ██║██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝
+///  ██╔██╗ ██║█████╗     ██║   ██║██╔████╔██║█████╗
+///  ██║╚██╗██║██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝
+///  ██║ ╚████║██║        ██║   ██║██║ ╚═╝ ██║███████╗
+///  ╚═╝  ╚═══╝╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝
+///
+/// @title NFTIME
+/// @author https://nftxyz.art/ (Olivier Winkler)
+/// @notice MINT YOUR MINUTE
+/// @custom:security-contact abc@nftxyz.art
 library NFTIMEArt {
-    /// @dev Generate the complete SVG code for a given Check.
+    /*//////////////////////////////////////////////////////////////
+                                PUBLIC
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice Generate the complete SVG code for a given Check.
     /// @param _date The check to render.
     function generateSVG(Date memory _date) public pure returns (bytes memory) {
         /// forgefmt: disable-start
@@ -18,7 +34,7 @@ library NFTIMEArt {
                 'height="1000" ',
                 'style="background:black;"',
             '>',
-                generateStyles(),
+                _generateStyles(),
                 '<path fill="none" stroke="black" d="M0 0h1000.8v1000.8H0z"/>',
                 _fillDateAttributes(_date),
                 '<path fill="none" stroke="#000" d="M520 620h200m40 0h200M520 860h440M520 380h440M520 140h440M40 260h440"/>',
@@ -30,7 +46,12 @@ library NFTIMEArt {
         /// forgefmt: disable-end
     }
 
-    function generateStyles() public pure returns (string memory) {
+    /*//////////////////////////////////////////////////////////////
+                                INTERNAL
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice Generate the complete SVG code for a given Check.
+    function _generateStyles() internal pure returns (string memory) {
         /// forgefmt: disable-start
         return string.concat(
             '<defs>',
@@ -49,6 +70,8 @@ library NFTIMEArt {
         /// forgefmt: disable-end
     }
 
+    /// @notice Generate the complete SVG code for a given Check.
+    /// @param _date The check to render.
     function _fillDateAttributes(Date memory _date) internal pure returns (string memory) {
         return string.concat(
             '<foreignObject x="720" y="520" height="200" width="40"><div xmlns="http://www.w3.org/1999/xhtml" class="container"><p style="font-size: 126px;">:</p></div></foreignObject>',
@@ -76,6 +99,8 @@ library NFTIMEArt {
         );
     }
 
+    /// @notice Generate the complete SVG code for a given Check.
+    /// @param _date The check to render.
     function _generateClock(Date memory _date) internal pure returns (string memory) {
         return string.concat(
             '<g transform="translate(60, 540)">',
@@ -95,7 +120,10 @@ library NFTIMEArt {
         );
     }
 
-    function _computeRotation(uint256 rotation, uint256 product) internal pure returns (string memory) {
-        return Strings.toString(rotation * product);
+    /// @notice Generate the complete SVG code for a given Check.
+    /// @param _rotation The check to render.
+    /// @param _product The check to render.
+    function _computeRotation(uint256 _rotation, uint256 _product) internal pure returns (string memory) {
+        return Strings.toString(_rotation * _product);
     }
 }
