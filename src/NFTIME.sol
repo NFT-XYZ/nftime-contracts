@@ -107,7 +107,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
     /// @param _type Timestamp for minted NFTIME
-    function mint(uint256 _time, Type _type) external payable whenNotPaused {
+    function mint(uint256 _time, Type _type) external payable whenNotPaused returns (uint256) {
         uint256 _price = _type == Type.Day ? NFTIME_DAY_PRICE : NFTIME_MINUTE_PRICE;
 
         if (msg.value != _price) {
@@ -115,7 +115,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         }
 
         s_tokenIds.increment();
-        uint256 newItemId = s_tokenIds.current();
+        uint256 _newItemId = s_tokenIds.current();
 
         Date memory _date = DateTime.timestampToDateTime(_time);
         string memory _dateString = DateTime.formatDate(_date);
@@ -124,7 +124,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
             revert NFTIME__TimeAlreadyMinted();
         }
 
-        _mint(msg.sender, newItemId);
+        _mint(msg.sender, _newItemId);
 
         if (_type == Type.Day) {
             s_mintedDays[_dateString] = true;
@@ -132,20 +132,22 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
             s_mintedMinutes[_dateString] = true;
         }
 
-        s_tokenIdToTimeStamp[newItemId] = _time;
+        s_tokenIdToTimeStamp[_newItemId] = _time;
+
+        return _newItemId;
     }
 
     /// @dev Mint Rarity NFTIME
     /// @param _tokenUri Timestamp for minted NFTIME
     function mintRarity(string memory _tokenUri) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
         s_tokenIds.increment();
-        uint256 newItemId = s_tokenIds.current();
+        uint256 _newItemId = s_tokenIds.current();
 
-        _mint(msg.sender, newItemId);
+        _mint(msg.sender, _newItemId);
 
-        s_rarities[newItemId] = true;
+        s_rarities[_newItemId] = true;
 
-        _setTokenURI(newItemId, _tokenUri);
+        _setTokenURI(_newItemId, _tokenUri);
     }
 
     /// @dev Withdraw collected Funds
