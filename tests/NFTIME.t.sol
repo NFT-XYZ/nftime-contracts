@@ -15,6 +15,8 @@ contract NFTIMETest is Test {
                               CONSTANTS
     //////////////////////////////////////////////////////////////*/
 
+    address private constant DEFAULT_ADMIN_ADDRESS = address(102030);
+
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     uint256 private constant TIMESTAMP = 1893495600;
@@ -40,12 +42,7 @@ contract NFTIMETest is Test {
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function setUp() public {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-
-        s_Nftime = new NFTIME(0x94B2ceA71F9bA7A6e55c40bE320033D1151145B6);
-
-        vm.stopBroadcast();
+        s_Nftime = new NFTIME(DEFAULT_ADMIN_ADDRESS);
     }
 
     /*//////////////////////////////////////////////////////////////
