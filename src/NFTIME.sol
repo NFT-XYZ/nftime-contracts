@@ -218,7 +218,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     {
         Date memory _date = DateTime.timestampToDateTime(getTimestampByTokenId(_tokenId));
 
-        return NFTIMEMetadata.generateTokenURI(_date);
+        return NFTIMEMetadata.generateTokenURI(_date, true);
     }
 
     /// @notice Function to be invoked before every token transfer (mint, burn, ...)

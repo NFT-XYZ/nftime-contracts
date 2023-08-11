@@ -5,7 +5,6 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
 import {NFTIMEArt} from "./NFTIMEArt.sol";
-import {HelveticaNowFont} from "./HelveticaNowFont.sol";
 import {Date, DateTime} from "./DateTime.sol";
 
 ///
@@ -27,8 +26,8 @@ library NFTIMEMetadata {
 
     /// @dev Render the JSON Metadata for a given Checks token.
     /// @param _date The DB containing all checks.
-    function generateTokenURI(Date memory _date) public pure returns (string memory) {
-        bytes memory _svg = NFTIMEArt.generateSVG(_date);
+    function generateTokenURI(Date memory _date, bool _isMinute) public pure returns (string memory) {
+        bytes memory _svg = NFTIMEArt.generateSVG(_date, _isMinute);
         string memory _name = DateTime.formatDate(_date);
 
         /// forgefmt: disable-start
