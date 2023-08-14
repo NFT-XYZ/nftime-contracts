@@ -8,24 +8,25 @@ import {NFTIMEArt} from "./NFTIMEArt.sol";
 import {Date, DateTime} from "./DateTime.sol";
 
 ///
-///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
-///  ████╗  ██║██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝
-///  ██╔██╗ ██║█████╗     ██║   ██║██╔████╔██║█████╗
-///  ██║╚██╗██║██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝
-///  ██║ ╚████║██║        ██║   ██║██║ ╚═╝ ██║███████╗
-///  ╚═╝  ╚═══╝╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝
+/// ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗              ███╗   ███╗███████╗████████╗ █████╗ ██████╗  █████╗ ████████╗ █████╗
+/// ████╗  ██║██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝              ████╗ ████║██╔════╝╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗
+/// ██╔██╗ ██║█████╗     ██║   ██║██╔████╔██║█████╗      █████╗    ██╔████╔██║█████╗     ██║   ███████║██║  ██║███████║   ██║   ███████║
+/// ██║╚██╗██║██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝      ╚════╝    ██║╚██╔╝██║██╔══╝     ██║   ██╔══██║██║  ██║██╔══██║   ██║   ██╔══██║
+/// ██║ ╚████║██║        ██║   ██║██║ ╚═╝ ██║███████╗              ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║██████╔╝██║  ██║   ██║   ██║  ██║
+/// ╚═╝  ╚═══╝╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝              ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
 ///
-/// @title NFTIME
+/// @title NFTIMEMetadata
 /// @author https://nftxyz.art/ (Olivier Winkler)
-/// @notice MINT YOUR MINUTE
+/// @notice Metadata Library
 /// @custom:security-contact abc@nftxyz.art
 library NFTIMEMetadata {
     /*//////////////////////////////////////////////////////////////
                                 PUBLIC
     //////////////////////////////////////////////////////////////*/
 
-    /// @dev Render the JSON Metadata for a given Checks token.
-    /// @param _date The DB containing all checks.
+    /// @notice Render the JSON Metadata for a given token.
+    /// @param _date Token's Date Struct.
+    /// @return Returns base64 encoded metadata file.
     function generateTokenURI(Date memory _date, bool _isMinute) public pure returns (string memory) {
         bytes memory _svg = NFTIMEArt.generateSVG(_date, _isMinute);
         string memory _name = DateTime.formatDate(_date, _isMinute);
@@ -55,9 +56,10 @@ library NFTIMEMetadata {
                                 INTERNAL
     //////////////////////////////////////////////////////////////*/
 
-    /// @dev Render the JSON atributes for a given Checks token.
-    /// @param _date The check to render.
-    /// @param _isMinute The check to render.
+    /// @dev Generate all Attributes
+    /// @param _date Token's Date Struct.
+    /// @param _isMinute bool.
+    /// @return Returns base64 encoded attributes.
     function _getAttributes(Date memory _date, bool _isMinute) internal pure returns (bytes memory) {
         return abi.encodePacked(
             _getTrait("Year", Strings.toString(_date.year), ","),

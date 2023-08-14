@@ -25,7 +25,7 @@ import {NFTIMEMetadata} from "./libraries/NFTIMEMetadata.sol";
 ///
 /// @title NFTIME
 /// @author https://nftxyz.art/ (Olivier Winkler)
-/// @notice MINT YOUR MINUTE
+/// @notice MINT YOUR MINUTE & DAY
 /// @custom:security-contact abc@nftxyz.art
 contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, ERC721Pausable, ERC721Burnable {
     using Counters for Counters.Counter;
@@ -38,26 +38,30 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @param _value Value sent
     error NFTIME__NotEnoughEtherSent(uint256 _value);
 
-    /// @dev Thrown if the sent amount of ethers isn't equal to price
+    /// @dev Thrown if time has already been minted
     error NFTIME__TimeAlreadyMinted();
 
-    /// @dev Thrown if the sent amount of ethers isn't equal to price
+    /// @dev Thrown if withdrawal has failed
     error NFTIME__WithdrawError();
 
     /*//////////////////////////////////////////////////////////////
                                 CONSTANTS
     //////////////////////////////////////////////////////////////*/
 
-    /// @dev Price in ETHER for a Minute
+    /// @dev Price in Ether for a Minute
     uint256 private constant NFTIME_MINUTE_PRICE = 0.01 ether;
 
-    /// @dev Price in ETHER for a Day
+    /// @dev Price in Ether for a Day
     uint256 private constant NFTIME_DAY_PRICE = 0.1 ether;
 
     /*//////////////////////////////////////////////////////////////
                                 STRUCTS
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev Struct that contains vital information
+    ///      timestamp: Minted Timestamp
+    ///      rarity: Token rarity
+    ///      nftType: Token Type (Minute, Day or Rarity)
     struct TokenStruct {
         uint256 timestamp;
         bool rarity;
@@ -68,6 +72,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
                                 ENUMS
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev Enum for Token Type
     enum Type {
         Minute,
         Day,
@@ -78,13 +83,13 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
                                 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    /// @dev Thrown if the sent amount of ethers isn't equal to price
+    /// @dev Tracker of tokenIds
     Counters.Counter private s_tokenIds;
 
-    /// @dev Thrown if the sent amount of ethers isn't equal to price
+    /// @dev IPFS Hash of Contract Medatadata
     string private s_contractUri = "ipfs://QmU5vDC1JkEASspnn3zF5WKRraXhtmrKPvWQL2Uwh6X1Wb";
 
-    /// @dev Mapps TokenId to rarity (true / false)
+    /// @dev Mapping TokenId => TokenStruct (timestamp, isRarity, nftType)
     mapping(uint256 tokenId => TokenStruct token) private s_tokens;
 
     /// @dev Mapps the minted formatted Date to minted (e.g. 01.JAN 2030 12:00 -> true / false)
@@ -98,9 +103,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Initialize NFTIME Contract, grant DEFAULT_ADMIN_ROLE to multisig.
-    /// @notice Initialize GreenLoan Contract
-    /// @dev Function can be only called once
-    /// @param _multisig Name for ERC20
+    /// @param _multisig Mutlisig address
     constructor(address _multisig) ERC721("NFTIME", "TIME") {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
     }
@@ -112,9 +115,10 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev The received ETH stays in this contract address
     receive() external payable {}
 
-    /// @dev Mint Regular NFTIME
-    /// @param _time Timestamp for minted NFTIME
-    /// @param _type Timestamp for minted NFTIME
+    /// @notice Mint Regular NFTIME
+    /// @param _time Timestamp for Token
+    /// @param _type Type for Token (Minute or Day)
+    /// @return Returns new tokenId
     function mint(uint256 _time, Type _type) external payable whenNotPaused returns (uint256) {
         bool _isMinute = _type == Type.Minute;
 
@@ -143,8 +147,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         return _newItemId;
     }
 
-    /// @dev Mint Rarity NFTIME
-    /// @param _tokenUri Timestamp for minted NFTIME
+    /// @notice Mint Rarity NFTIME
+    /// @param _tokenUri Custom IPFS Hash
     function mintRarity(string memory _tokenUri) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
         s_tokenIds.increment();
         uint256 _newItemId = s_tokenIds.current();
@@ -156,7 +160,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         _setTokenURI(_newItemId, _tokenUri);
     }
 
-    /// @dev Withdraw collected Funds
+    /// @notice Withdraw collected funds
     function withdraw() external payable onlyRole(DEFAULT_ADMIN_ROLE) {
         (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
         if (!success) {
@@ -164,36 +168,36 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         }
     }
 
-    /// @dev Update DEFAULT_ADMIN_ROLE.
+    /// @notice Update DEFAULT_ADMIN_ROLE.
     /// @param _multisig New multisig address.
     function setDefaultAdminRole(address _multisig) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
     }
 
-    /// @dev Update s_contractUri.
+    /// @notice Update s_contractUri.
     /// @param _contractUri New contract URI.
     function updateContractUri(string memory _contractUri) external onlyRole(DEFAULT_ADMIN_ROLE) {
         s_contractUri = _contractUri;
     }
 
-    /// @dev Update metadata of nft.
+    /// @notice Update metadata of nft.
     /// @param _tokenId Id of token.
     /// @param _tokenUri New token URI.
     function updateNftMetadata(uint256 _tokenId, string memory _tokenUri) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _setTokenURI(_tokenId, _tokenUri);
     }
 
-    /// @dev Stop Minting
+    /// @notice Stop Minting
     function pauseTransactions() external onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
-    /// @dev Resume Minting
+    /// @notice Resume Minting
     function resumeTransactions() external onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 
-    /// @dev IPFS Link to Opensea Collection Metadata.
+    /// @notice IPFS Link to Opensea Collection Metadata.
     /// @return Returns contractUri
     function contractURI() external view returns (string memory) {
         return s_contractUri;
@@ -203,8 +207,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
                                 PUBLIC
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Get Timestamp by TokenId
-    function getTimestampByTokenId(uint256 _tokenId) public view returns (TokenStruct memory) {
+    /// @notice Get TokenStruct by TokenId
+    /// @param _tokenId TokenId
+    function getTokenStructByTokenId(uint256 _tokenId) public view returns (TokenStruct memory) {
         return s_tokens[_tokenId];
     }
 
@@ -212,9 +217,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
                             INTERNAL OVERRIDES
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
-    /// @dev Function can only be when Contract is not paused
-    /// @param _tokenId Sender's Address
+    /// @dev Override of the tokenURI function
+    /// @param _tokenId TokenId
+    /// @return Returns base64 encoded metadata
     function tokenURI(uint256 _tokenId)
         public
         view
@@ -222,16 +227,14 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        TokenStruct memory _tokenStruct = getTimestampByTokenId(_tokenId);
+        TokenStruct memory _tokenStruct = getTokenStructByTokenId(_tokenId);
 
         Date memory _date = DateTime.timestampToDateTime(_tokenStruct.timestamp);
 
         return NFTIMEMetadata.generateTokenURI(_date, _tokenStruct.nftType == Type.Minute);
     }
 
-    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
-    /// @dev Function can only be when Contract is not paused
-    /// @param interfaceId Sender's Address
+    /// @dev See {IERC165-supportsInterface}.
     function supportsInterface(bytes4 interfaceId)
         public
         view
@@ -242,12 +245,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         return super.supportsInterface(interfaceId);
     }
 
-    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
-    /// @dev Function can only be when Contract is not paused
-    /// @param from Sender's Address
-    /// @param to Recipient's Address
-    /// @param firstTokenId Token ID
-    /// @param batchSize Size of Batch
+    /// @dev See {ERC721-_beforeTokenTransfer}.
     function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
         internal
         override(ERC721, ERC721Enumerable, ERC721Pausable)
@@ -255,9 +253,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
-    /// @notice Function to be invoked before every token transfer (mint, burn, ...)
-    /// @dev Function can only be when Contract is not paused
-    /// @param _tokenId Sender's Address
+    /// @dev See {ERC721-_burn}.
     function _burn(uint256 _tokenId) internal override(ERC721, ERC721URIStorage) whenNotPaused {
         super._burn(_tokenId);
     }
