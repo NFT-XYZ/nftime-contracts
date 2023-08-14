@@ -63,6 +63,7 @@ library NFTIMEMetadata {
             _getTrait("Year", Strings.toString(_date.year), ","),
             _getTrait("Month", _date.month, ","),
             _getTrait("Day", _date.day, ","),
+            _getTrait("Type", _isMinute ? "MINUTE" : "DAY", ","),
             _isMinute ? _getTrait("Week Day", _date.dayOfWeek, ",") : "",
             _isMinute ? _getTrait("Hour", _date.hour, ",") : "",
             _isMinute ? _getTrait("Minute", _date.minute, ",") : "",
