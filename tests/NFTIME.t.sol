@@ -79,6 +79,13 @@ contract NFTIMETest is Test {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
+    function test_RevertMintMinutePaused() public paused {
+        vm.expectRevert("Pausable: paused");
+        s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
+    }
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
     function test_RevertMintMinuteIfDateAlreadyMinted() public {
         s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
 
@@ -102,6 +109,13 @@ contract NFTIMETest is Test {
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", NFTIME_MINUTE_PRICE));
         s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Day);
+    }
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_RevertMintDayPaused() public paused {
+        vm.expectRevert("Pausable: paused");
+        s_Nftime.mint{value: NFTIME_DAY_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
@@ -135,7 +149,8 @@ contract NFTIMETest is Test {
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_ShouldRevertWhenPausedMintRarity() public paused {
-        vm.expectRevert();
+        vm.expectRevert("Pausable: paused");
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
         s_Nftime.mintRarity("");
     }
 
