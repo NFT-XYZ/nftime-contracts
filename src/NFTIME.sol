@@ -149,7 +149,12 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @notice Mint Rarity NFTIME
     /// @param _tokenUri Custom IPFS Hash
-    function mintRarity(string memory _tokenUri) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
+    function mintRarity(string memory _tokenUri)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+        whenNotPaused
+        returns (uint256)
+    {
         s_tokenIds.increment();
         uint256 _newItemId = s_tokenIds.current();
 
@@ -158,6 +163,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokens[_newItemId] = TokenStruct({timestamp: 0, rarity: true, nftType: Type.Rarity});
 
         _setTokenURI(_newItemId, _tokenUri);
+
+        return _newItemId;
     }
 
     /// @notice Withdraw collected funds
