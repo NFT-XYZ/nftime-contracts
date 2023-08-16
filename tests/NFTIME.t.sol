@@ -156,35 +156,103 @@ contract NFTIMETest is Test {
                          function withdraw()
     //////////////////////////////////////////////////////////////*/
 
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertWithdraw() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_Withdraw() public {}
+
     /*//////////////////////////////////////////////////////////////
                          function setDefaultAdminRole()
     //////////////////////////////////////////////////////////////*/
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertSetDefaultAdminRole() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_SetDefaultAdminRole() public {}
 
     /*//////////////////////////////////////////////////////////////
                          function updateContractUri()
     //////////////////////////////////////////////////////////////*/
 
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertUpdateContractUri() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_UpdateContractUri() public {}
+
     /*//////////////////////////////////////////////////////////////
                          function updateNftMetadata()
     //////////////////////////////////////////////////////////////*/
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertUpdateNftMetadata() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_UpdateNftMetadata() public {}
 
     /*//////////////////////////////////////////////////////////////
                          function pauseTransactions()
     //////////////////////////////////////////////////////////////*/
 
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertPauseTransactions() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_PauseTransactions() public {}
+
     /*//////////////////////////////////////////////////////////////
                          function resumeTransactions()
     //////////////////////////////////////////////////////////////*/
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertUnpauseTransactions() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_UnpauseTransactions() public {}
 
     /*//////////////////////////////////////////////////////////////
                          function contractURI()
     //////////////////////////////////////////////////////////////*/
 
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ContractURI() public {}
+
     /*//////////////////////////////////////////////////////////////
                     function getTokenStructByTokenId()
     //////////////////////////////////////////////////////////////*/
 
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_GetTokenStructByTokenId() public {}
+
     /*//////////////////////////////////////////////////////////////
                             function tokenURI()
     //////////////////////////////////////////////////////////////*/
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_MinuteNftTokenURI() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_DayNftTokenURI() public {}
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_RarityNftTokenURI() public {}
 }
