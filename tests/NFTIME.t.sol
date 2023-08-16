@@ -36,6 +36,24 @@ contract NFTIMETest is Test {
     NFTIME private s_Nftime;
 
     /*//////////////////////////////////////////////////////////////
+                             MODIFIERS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Explain to a developer any extra details
+    modifier paused() {
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_Nftime.pauseTransactions();
+        _;
+    }
+
+    /// @dev Explain to a developer any extra details
+    modifier unpaused() {
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_Nftime.resumeTransactions();
+        _;
+    }
+
+    /*//////////////////////////////////////////////////////////////
                                SETUP
     //////////////////////////////////////////////////////////////*/
 
