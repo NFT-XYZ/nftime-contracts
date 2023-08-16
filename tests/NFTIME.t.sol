@@ -91,6 +91,7 @@ contract NFTIMETest is Test {
     function test_MintMinute() public {
         uint256 _tokenId = s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
         assertEq(_tokenId, s_Nftime.totalSupply());
+        s_Nftime.tokenURI(_tokenId);
     }
 
     /// @notice Explain to an end user what this does
@@ -117,5 +118,73 @@ contract NFTIMETest is Test {
     function test_MintDay() public {
         uint256 _tokenId = s_Nftime.mint{value: NFTIME_DAY_PRICE}(TIMESTAMP, NFTIME.Type.Day);
         assertEq(_tokenId, s_Nftime.totalSupply());
+        s_Nftime.tokenURI(_tokenId);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                         function mintRarity()
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertWrongCallerMintRarity() public {
+        vm.expectRevert();
+        s_Nftime.mintRarity("");
+    }
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_ShouldRevertWhenPausedMintRarity() public paused {
+        vm.expectRevert();
+        s_Nftime.mintRarity("");
+    }
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    function test_MintRarity() public {
+        string memory _rarityTokenUri = "https://rarity.nftime.site";
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        uint256 _tokenId = s_Nftime.mintRarity(_rarityTokenUri);
+        s_Nftime.tokenURI(_tokenId);
+
+        assertEq(true, s_Nftime.getTokenStructByTokenId(_tokenId).rarity);
+        assertEq(_rarityTokenUri, s_Nftime.tokenURI(_tokenId));
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                         function withdraw()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                         function setDefaultAdminRole()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                         function updateContractUri()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                         function updateNftMetadata()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                         function pauseTransactions()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                         function resumeTransactions()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                         function contractURI()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                    function getTokenStructByTokenId()
+    //////////////////////////////////////////////////////////////*/
+
+    /*//////////////////////////////////////////////////////////////
+                            function tokenURI()
+    //////////////////////////////////////////////////////////////*/
 }
