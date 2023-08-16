@@ -236,9 +236,13 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     {
         TokenStruct memory _tokenStruct = getTokenStructByTokenId(_tokenId);
 
-        Date memory _date = DateTime.timestampToDateTime(_tokenStruct.timestamp);
+        if (!_tokenStruct.rarity) {
+            Date memory _date = DateTime.timestampToDateTime(_tokenStruct.timestamp);
 
-        return NFTIMEMetadata.generateTokenURI(_date, _tokenStruct.nftType == Type.Minute);
+            return NFTIMEMetadata.generateTokenURI(_date, _tokenStruct.nftType == Type.Minute);
+        } else {
+            return super.tokenURI(_tokenId);
+        }
     }
 
     /// @dev See {IERC165-supportsInterface}.
