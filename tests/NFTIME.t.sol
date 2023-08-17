@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-import {Test} from "forge-std/Test.sol";
+import {Test} from "@std/Test.sol";
 import {NFTIME} from "../src/NFTIME.sol";
 
 import {DateTime, Date} from "../src/libraries/DateTime.sol";

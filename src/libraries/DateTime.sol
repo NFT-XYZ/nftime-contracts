@@ -4,7 +4,7 @@
 
 pragma solidity ^0.8.18;
 
-import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Strings} from "@oz/utils/Strings.sol";
 
 /// @dev Struct for all necessary Date-Attributes
 struct Date {

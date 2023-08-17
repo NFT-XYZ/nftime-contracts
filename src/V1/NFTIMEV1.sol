@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
-import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
-import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Ownable} from "@oz/access/Ownable.sol";
+import {AccessControl} from "@oz/access/AccessControl.sol";
+import {Counters} from "@oz/utils/Counters.sol";
+import {ERC721} from "@oz/token/ERC721/ERC721.sol";
+import {ERC721URIStorage} from "@oz/token/ERC721/extensions/ERC721URIStorage.sol";
+import {ERC721Enumerable} from "@oz/token/ERC721/extensions/ERC721Enumerable.sol";
+import {ERC721Pausable} from "@oz/token/ERC721/extensions/ERC721Pausable.sol";
+import {ERC721Burnable} from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
+import {Base64} from "@oz/utils/Base64.sol";
+import {Strings} from "@oz/utils/Strings.sol";
 
 import {Date, DateTime} from "./utils/DateTime.sol";
 import {Renderer} from "./utils/Renderer.sol";
