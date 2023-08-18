@@ -13,7 +13,12 @@ contract AddressesHelper is Script {
     /*//////////////////////////////////////////////////////////////
                             NFTIME.sol
     //////////////////////////////////////////////////////////////*/
+
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    address private constant DEFAULT_ADMIN_ADDRESS = address(102030);
+    address public constant DEFAULT_ADMIN_ADDRESS = address(102030);
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    address public constant SENDER_ADDRESS = address(1);
 }

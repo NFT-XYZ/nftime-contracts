@@ -4,18 +4,20 @@ pragma solidity ^0.8.18;
 import {Test} from "@std/Test.sol";
 import {NFTIME} from "../src/NFTIME.sol";
 
+import {Constants} from "../helpers/Constants.sol";
+import {AccessControlHelper} from "../helpers/AccessControlHelper.s.sol";
+import {AddressesHelper} from "../helpers/AddressesHelper.s.sol";
+
 import {DateTime, Date} from "../src/libraries/DateTime.sol";
 
 /// @title NFTIME
 /// @author https://nftxyz.art/ (Olivier Winkler)
 /// @notice MINT YOUR MINUTE
 /// @custom:security-contact abc@nftxyz.art
-contract NFTIMETest is Test {
+contract NFTIMETest is Test, AccessControlHelper, Constants {
     /*//////////////////////////////////////////////////////////////
                               CONSTANTS
     //////////////////////////////////////////////////////////////*/
-
-    address private constant DEFAULT_ADMIN_ADDRESS = address(102030);
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
@@ -142,7 +144,8 @@ contract NFTIMETest is Test {
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_ShouldRevertWrongCallerMintRarity() public {
-        vm.expectRevert();
+        vm.prank(SENDER_ADDRESS);
+        vm.expectRevert(getAccessControlRevertMessage(SENDER_ADDRESS, DEFAULT_ADMIN_ROLE));
         s_Nftime.mintRarity("");
     }
 
