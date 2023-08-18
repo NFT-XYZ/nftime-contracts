@@ -184,14 +184,41 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertWithdraw() public { }
+    function test_ShouldRevertWithdraw() public {
+        vm.prank(SENDER_ADDRESS);
+        vm.expectRevert(getAccessControlRevertMessage(SENDER_ADDRESS, DEFAULT_ADMIN_ROLE));
+        s_nftime.withdraw();
+    }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_Withdraw() public { }
+    function test_Withdraw() public {
+        uint256 _initialBalance = 100 ether;
+
+        vm.deal(DEFAULT_ADMIN_ADDRESS, _initialBalance);
+
+        uint256 _depositedAmount = 10 ether;
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        payable(address(s_nftime)).transfer(_depositedAmount);
+
+        uint256 _accountBalanceAfterDeposit = DEFAULT_ADMIN_ADDRESS.balance;
+
+        assertEq(_accountBalanceAfterDeposit, _initialBalance - _depositedAmount);
+        assertEq(address(s_nftime).balance, _depositedAmount);
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_nftime.withdraw();
+
+        uint256 _accountBalanceAfterWithdrawal = DEFAULT_ADMIN_ADDRESS.balance;
+        uint256 _contractBalance = address(s_nftime).balance;
+
+        assertEq(_accountBalanceAfterWithdrawal, _initialBalance);
+        assertEq(_contractBalance, 0 ether);
+    }
 
     /*//////////////////////////////////////////////////////////////
-                         function setDefaultAdminRole()
+                     function setDefaultAdminRole()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
@@ -203,7 +230,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_SetDefaultAdminRole() public { }
 
     /*//////////////////////////////////////////////////////////////
-                         function updateContractUri()
+                      function updateContractUri()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
@@ -215,7 +242,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_UpdateContractUri() public { }
 
     /*//////////////////////////////////////////////////////////////
-                         function updateNftMetadata()
+                       function updateNftMetadata()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
@@ -227,7 +254,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_UpdateNftMetadata() public { }
 
     /*//////////////////////////////////////////////////////////////
-                         function pauseTransactions()
+                    function pauseTransactions()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
@@ -239,7 +266,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_PauseTransactions() public { }
 
     /*//////////////////////////////////////////////////////////////
-                         function resumeTransactions()
+                    function resumeTransactions()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
@@ -251,7 +278,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_UnpauseTransactions() public { }
 
     /*//////////////////////////////////////////////////////////////
-                         function contractURI()
+                    function contractURI()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
@@ -259,7 +286,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_ContractURI() public { }
 
     /*//////////////////////////////////////////////////////////////
-                    function getTokenStructByTokenId()
+                function getTokenStructByTokenId()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
@@ -267,7 +294,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_GetTokenStructByTokenId() public { }
 
     /*//////////////////////////////////////////////////////////////
-                            function tokenURI()
+                        function tokenURI()
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Explain to an end user what this does
