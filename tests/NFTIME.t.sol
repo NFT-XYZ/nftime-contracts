@@ -151,6 +151,14 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
+    function test_FuzzShouldRevertWrongCallerMintRarity(address _sender) public {
+        vm.prank(_sender);
+        vm.expectRevert(getAccessControlRevertMessage(_sender, DEFAULT_ADMIN_ROLE));
+        s_Nftime.mintRarity("");
+    }
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
     function test_ShouldRevertWhenPausedMintRarity() public paused {
         vm.expectRevert("Pausable: paused");
         vm.prank(DEFAULT_ADMIN_ADDRESS);
