@@ -165,10 +165,10 @@ library NFTIMEArt {
             PATH_CLOCK_HOURS,
             PATH_CLOCK_NOSE,
             '<path fill="#fff" d="M283 139.69l-4.503 11.609V283h9.006V151.299L283 139.69z" transform="rotate(',
-            _computeRotation(_date.hourUint, 30),
+            _computeHourRotation(_date),
             ',283,283) translate(0,0)" id="hand-h" />',
             ' <path fill="#fff" d="M287.503 65.633L283 53.324l-4.503 12.31V282.9h9.006V65.633z" transform="rotate(',
-            _computeRotation(_date.minuteUint, 6),
+            _computeMinuteRotation(_date.minuteUint, 6),
             ',283,283) translate(0,0)" id="hand-m" />',
             PATH_CLOCK_SECOND_HAND,
             "</svg>",
@@ -176,10 +176,23 @@ library NFTIMEArt {
         );
     }
 
-    /// @dev Calculate rotation amount
+    /// @dev Calculate rotation for minute hand
     /// @param _rotation rotation.
     /// @param _product product.
-    function _computeRotation(uint256 _rotation, uint256 _product) internal pure returns (string memory) {
+    function _computeMinuteRotation(uint256 _rotation, uint256 _product) internal pure returns (string memory) {
         return Strings.toString(_rotation * _product);
+    }
+
+    /// @dev Calculate rotation for hour hand
+    /// @param _date Date object.
+    function _computeHourRotation(Date memory _date) internal pure returns (string memory) {
+        uint256 _factor = 10 ** 3;
+        uint256 _denominator = 60;
+        uint256 _hourRotation = 30;
+
+        uint256 _quotient = _date.minuteUint * _hourRotation / _denominator;
+        uint256 _remainder = (_date.minuteUint * _factor / _denominator) % _factor;
+
+        return string.concat(Strings.toString(_date.hourUint * 30 + _quotient), ".", Strings.toString(_remainder));
     }
 }
