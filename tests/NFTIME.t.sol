@@ -35,7 +35,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    NFTIME private s_Nftime;
+    NFTIME private s_nftime;
 
     /*//////////////////////////////////////////////////////////////
                              MODIFIERS
@@ -44,14 +44,14 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     /// @dev Explain to a developer any extra details
     modifier paused() {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        s_Nftime.pauseTransactions();
+        s_nftime.pauseTransactions();
         _;
     }
 
     /// @dev Explain to a developer any extra details
     modifier unpaused() {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        s_Nftime.resumeTransactions();
+        s_nftime.resumeTransactions();
         _;
     }
 
@@ -62,7 +62,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function setUp() public {
-        s_Nftime = new NFTIME(DEFAULT_ADMIN_ADDRESS);
+        s_nftime = new NFTIME(DEFAULT_ADMIN_ADDRESS);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -73,68 +73,68 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     /// @dev Explain to a developer any extra details
     function test_RevertMintMinuteIncorrectValueSent() public {
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", 0 ether));
-        s_Nftime.mint{ value: 0 ether }(TIMESTAMP, NFTIME.Type.Minute);
+        s_nftime.mint{ value: 0 ether }(TIMESTAMP, NFTIME.Type.Minute);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", NFTIME_DAY_PRICE));
-        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintMinutePaused() public paused {
         vm.expectRevert("Pausable: paused");
-        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
+        s_nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintMinuteIfDateAlreadyMinted() public {
-        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
+        s_nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__TimeAlreadyMinted()"));
-        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
+        s_nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_MintMinute() public {
-        uint256 _tokenId = s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
-        assertEq(_tokenId, s_Nftime.totalSupply());
-        s_Nftime.tokenURI(_tokenId);
+        uint256 _tokenId = s_nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
+        assertEq(_tokenId, s_nftime.totalSupply());
+        s_nftime.tokenURI(_tokenId);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintDayIncorrectValueSent() public {
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", 0 ether));
-        s_Nftime.mint{ value: 0 ether }(TIMESTAMP, NFTIME.Type.Day);
+        s_nftime.mint{ value: 0 ether }(TIMESTAMP, NFTIME.Type.Day);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", NFTIME_MINUTE_PRICE));
-        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+        s_nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Day);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintDayPaused() public paused {
         vm.expectRevert("Pausable: paused");
-        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintDayIfDateAlreadyMinted() public {
-        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__TimeAlreadyMinted()"));
-        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_MintDay() public {
-        uint256 _tokenId = s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
-        assertEq(_tokenId, s_Nftime.totalSupply());
-        s_Nftime.tokenURI(_tokenId);
+        uint256 _tokenId = s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+        assertEq(_tokenId, s_nftime.totalSupply());
+        s_nftime.tokenURI(_tokenId);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_ShouldRevertWrongCallerMintRarity() public {
         vm.prank(SENDER_ADDRESS);
         vm.expectRevert(getAccessControlRevertMessage(SENDER_ADDRESS, DEFAULT_ADMIN_ROLE));
-        s_Nftime.mintRarity("");
+        s_nftime.mintRarity("");
     }
 
     /// @notice Explain to an end user what this does
@@ -154,7 +154,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_FuzzShouldRevertWrongCallerMintRarity(address _sender) public {
         vm.prank(_sender);
         vm.expectRevert(getAccessControlRevertMessage(_sender, DEFAULT_ADMIN_ROLE));
-        s_Nftime.mintRarity("");
+        s_nftime.mintRarity("");
     }
 
     /// @notice Explain to an end user what this does
@@ -162,7 +162,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     function test_ShouldRevertWhenPausedMintRarity() public paused {
         vm.expectRevert("Pausable: paused");
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        s_Nftime.mintRarity("");
+        s_nftime.mintRarity("");
     }
 
     /// @notice Explain to an end user what this does
@@ -171,11 +171,11 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
         string memory _rarityTokenUri = "https://rarity.nftime.site";
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        uint256 _tokenId = s_Nftime.mintRarity(_rarityTokenUri);
-        s_Nftime.tokenURI(_tokenId);
+        uint256 _tokenId = s_nftime.mintRarity(_rarityTokenUri);
+        s_nftime.tokenURI(_tokenId);
 
-        assertEq(true, s_Nftime.getTokenStructByTokenId(_tokenId).rarity);
-        assertEq(_rarityTokenUri, s_Nftime.tokenURI(_tokenId));
+        assertEq(true, s_nftime.getTokenStructByTokenId(_tokenId).rarity);
+        assertEq(_rarityTokenUri, s_nftime.tokenURI(_tokenId));
     }
 
     /*//////////////////////////////////////////////////////////////
