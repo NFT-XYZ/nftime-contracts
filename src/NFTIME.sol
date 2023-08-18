@@ -188,13 +188,6 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_contractUri = _contractUri;
     }
 
-    /// @notice Update metadata of nft.
-    /// @param _tokenId Id of token.
-    /// @param _tokenUri New token URI.
-    function updateNftMetadata(uint256 _tokenId, string memory _tokenUri) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _setTokenURI(_tokenId, _tokenUri);
-    }
-
     /// @notice Stop Minting
     function pauseTransactions() external onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();

@@ -279,18 +279,6 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     }
 
     /*//////////////////////////////////////////////////////////////
-                       function updateNftMetadata()
-    //////////////////////////////////////////////////////////////*/
-
-    /// @notice Explain to an end user what this does
-    /// @dev Explain to a developer any extra details
-    function test_ShouldRevertUpdateNftMetadata() public { }
-
-    /// @notice Explain to an end user what this does
-    /// @dev Explain to a developer any extra details
-    function test_UpdateNftMetadata() public { }
-
-    /*//////////////////////////////////////////////////////////////
                     function pauseTransactions()
     //////////////////////////////////////////////////////////////*/
 
