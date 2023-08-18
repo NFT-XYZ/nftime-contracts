@@ -239,7 +239,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         public
         view
         virtual
-        override(AccessControl, ERC721, ERC721Enumerable)
+        override(AccessControl, ERC721, ERC721Enumerable, ERC721URIStorage)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
