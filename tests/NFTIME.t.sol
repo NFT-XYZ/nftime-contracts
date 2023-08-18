@@ -2,6 +2,7 @@
 pragma solidity ^0.8.18;
 
 import { Test } from "@std/Test.sol";
+import { console } from "@std/console.sol";
 import { NFTIME } from "../src/NFTIME.sol";
 
 import { Constants } from "../helpers/Constants.sol";
@@ -223,11 +224,36 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertSetDefaultAdminRole() public { }
+    function test_ShouldRevertSetDefaultAdminRole() public {
+        vm.prank(SENDER_ADDRESS);
+        vm.expectRevert(getAccessControlRevertMessage(SENDER_ADDRESS, DEFAULT_ADMIN_ROLE));
+        s_nftime.setDefaultAdminRole(address(0));
+    }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_SetDefaultAdminRole() public { }
+    function test_SetDefaultAdminRole() public {
+        address _newMultisig = address(99_999);
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_nftime.setDefaultAdminRole(_newMultisig);
+
+        assertTrue(s_nftime.hasRole(s_nftime.DEFAULT_ADMIN_ROLE(), _newMultisig));
+
+        vm.prank(_newMultisig);
+        uint256 _tokenId = s_nftime.mintRarity("");
+
+        assertEq(_tokenId, 1);
+
+        vm.prank(_newMultisig);
+        s_nftime.setDefaultAdminRole(DEFAULT_ADMIN_ADDRESS);
+
+        assertTrue(s_nftime.hasRole(s_nftime.DEFAULT_ADMIN_ROLE(), DEFAULT_ADMIN_ADDRESS));
+
+        vm.prank(_newMultisig);
+        vm.expectRevert(getAccessControlRevertMessage(_newMultisig, DEFAULT_ADMIN_ROLE));
+        s_nftime.setDefaultAdminRole(address(0));
+    }
 
     /*//////////////////////////////////////////////////////////////
                       function updateContractUri()

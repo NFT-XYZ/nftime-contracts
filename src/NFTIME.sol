@@ -178,7 +178,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @notice Update DEFAULT_ADMIN_ROLE.
     /// @param _multisig New multisig address.
     function setDefaultAdminRole(address _multisig) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _grantRole(DEFAULT_ADMIN_ROLE, _multisig);
+        grantRole(DEFAULT_ADMIN_ROLE, _multisig);
+        renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     /// @notice Update s_contractUri.
