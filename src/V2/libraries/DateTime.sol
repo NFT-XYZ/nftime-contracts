@@ -4,7 +4,7 @@
 
 pragma solidity ^0.8.18;
 
-import {Strings} from "@oz/utils/Strings.sol";
+import { Strings } from "@oz/utils/Strings.sol";
 
 struct Date {
     uint256 year;
@@ -22,7 +22,7 @@ library DateTime {
     uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
     uint256 private constant SECONDS_PER_HOUR = 60 * 60;
     uint256 private constant SECONDS_PER_MINUTE = 60;
-    int256 private constant OFFSET19700101 = 2440588;
+    int256 private constant OFFSET19700101 = 2_440_588;
 
     string private constant WEEKDAY_MON = "MON";
     string private constant WEEKDAY_TUE = "TUE";
@@ -68,10 +68,10 @@ library DateTime {
     function _daysToDate(uint256 _days) internal pure returns (uint256 year, string memory month, string memory day) {
         int256 __days = int256(_days);
 
-        int256 L = __days + 68569 + OFFSET19700101;
-        int256 N = (4 * L) / 146097;
-        L = L - (146097 * N + 3) / 4;
-        int256 _year = (4000 * (L + 1)) / 1461001;
+        int256 L = __days + 68_569 + OFFSET19700101;
+        int256 N = (4 * L) / 146_097;
+        L = L - (146_097 * N + 3) / 4;
+        int256 _year = (4000 * (L + 1)) / 1_461_001;
         L = L - (1461 * _year) / 4 + 31;
         int256 _month = (80 * L) / 2447;
         int256 _day = L - (2447 * _month) / 80;

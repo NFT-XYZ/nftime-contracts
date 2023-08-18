@@ -56,7 +56,11 @@ library svg {
         return el("linearGradient", _props, _children);
     }
 
-    function gradientStop(uint256 offset, string memory stopColor, string memory _props)
+    function gradientStop(
+        uint256 offset,
+        string memory stopColor,
+        string memory _props
+    )
         internal
         pure
         returns (string memory)
@@ -83,7 +87,11 @@ library svg {
 
     /* COMMON */
     // A generic element, can be used to construct any SVG (or HTML) element
-    function el(string memory _tag, string memory _props, string memory _children)
+    function el(
+        string memory _tag,
+        string memory _props,
+        string memory _children
+    )
         internal
         pure
         returns (string memory)

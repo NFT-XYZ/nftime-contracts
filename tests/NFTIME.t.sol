@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-import {Test} from "@std/Test.sol";
-import {NFTIME} from "../src/NFTIME.sol";
+import { Test } from "@std/Test.sol";
+import { NFTIME } from "../src/NFTIME.sol";
 
-import {Constants} from "../helpers/Constants.sol";
-import {AccessControlHelper} from "../helpers/AccessControlHelper.s.sol";
-import {AddressesHelper} from "../helpers/AddressesHelper.s.sol";
+import { Constants } from "../helpers/Constants.sol";
+import { AccessControlHelper } from "../helpers/AccessControlHelper.s.sol";
+import { AddressesHelper } from "../helpers/AddressesHelper.s.sol";
 
-import {DateTime, Date} from "../src/libraries/DateTime.sol";
+import { DateTime, Date } from "../src/libraries/DateTime.sol";
 
 /// @title NFTIME
 /// @author https://nftxyz.art/ (Olivier Winkler)
@@ -21,7 +21,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    uint256 private constant TIMESTAMP = 1893495600;
+    uint256 private constant TIMESTAMP = 1_893_495_600;
 
     /// @dev Price in ETHER for a Minute
     uint256 private constant NFTIME_MINUTE_PRICE = 0.01 ether;
@@ -73,32 +73,32 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     /// @dev Explain to a developer any extra details
     function test_RevertMintMinuteIncorrectValueSent() public {
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", 0 ether));
-        s_Nftime.mint{value: 0 ether}(TIMESTAMP, NFTIME.Type.Minute);
+        s_Nftime.mint{ value: 0 ether }(TIMESTAMP, NFTIME.Type.Minute);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", NFTIME_DAY_PRICE));
-        s_Nftime.mint{value: NFTIME_DAY_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
+        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintMinutePaused() public paused {
         vm.expectRevert("Pausable: paused");
-        s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
+        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintMinuteIfDateAlreadyMinted() public {
-        s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
+        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__TimeAlreadyMinted()"));
-        s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
+        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_MintMinute() public {
-        uint256 _tokenId = s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
+        uint256 _tokenId = s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
         assertEq(_tokenId, s_Nftime.totalSupply());
         s_Nftime.tokenURI(_tokenId);
     }
@@ -107,32 +107,32 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     /// @dev Explain to a developer any extra details
     function test_RevertMintDayIncorrectValueSent() public {
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", 0 ether));
-        s_Nftime.mint{value: 0 ether}(TIMESTAMP, NFTIME.Type.Day);
+        s_Nftime.mint{ value: 0 ether }(TIMESTAMP, NFTIME.Type.Day);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__NotEnoughEtherSent(uint256)", NFTIME_MINUTE_PRICE));
-        s_Nftime.mint{value: NFTIME_MINUTE_PRICE}(TIMESTAMP, NFTIME.Type.Day);
+        s_Nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Day);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintDayPaused() public paused {
         vm.expectRevert("Pausable: paused");
-        s_Nftime.mint{value: NFTIME_DAY_PRICE}(TIMESTAMP, NFTIME.Type.Minute);
+        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_RevertMintDayIfDateAlreadyMinted() public {
-        s_Nftime.mint{value: NFTIME_DAY_PRICE}(TIMESTAMP, NFTIME.Type.Day);
+        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
 
         vm.expectRevert(abi.encodeWithSignature("NFTIME__TimeAlreadyMinted()"));
-        s_Nftime.mint{value: NFTIME_DAY_PRICE}(TIMESTAMP, NFTIME.Type.Day);
+        s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
     }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_MintDay() public {
-        uint256 _tokenId = s_Nftime.mint{value: NFTIME_DAY_PRICE}(TIMESTAMP, NFTIME.Type.Day);
+        uint256 _tokenId = s_Nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
         assertEq(_tokenId, s_Nftime.totalSupply());
         s_Nftime.tokenURI(_tokenId);
     }
@@ -184,11 +184,11 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertWithdraw() public {}
+    function test_ShouldRevertWithdraw() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_Withdraw() public {}
+    function test_Withdraw() public { }
 
     /*//////////////////////////////////////////////////////////////
                          function setDefaultAdminRole()
@@ -196,11 +196,11 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertSetDefaultAdminRole() public {}
+    function test_ShouldRevertSetDefaultAdminRole() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_SetDefaultAdminRole() public {}
+    function test_SetDefaultAdminRole() public { }
 
     /*//////////////////////////////////////////////////////////////
                          function updateContractUri()
@@ -208,11 +208,11 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertUpdateContractUri() public {}
+    function test_ShouldRevertUpdateContractUri() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_UpdateContractUri() public {}
+    function test_UpdateContractUri() public { }
 
     /*//////////////////////////////////////////////////////////////
                          function updateNftMetadata()
@@ -220,11 +220,11 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertUpdateNftMetadata() public {}
+    function test_ShouldRevertUpdateNftMetadata() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_UpdateNftMetadata() public {}
+    function test_UpdateNftMetadata() public { }
 
     /*//////////////////////////////////////////////////////////////
                          function pauseTransactions()
@@ -232,11 +232,11 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertPauseTransactions() public {}
+    function test_ShouldRevertPauseTransactions() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_PauseTransactions() public {}
+    function test_PauseTransactions() public { }
 
     /*//////////////////////////////////////////////////////////////
                          function resumeTransactions()
@@ -244,11 +244,11 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertUnpauseTransactions() public {}
+    function test_ShouldRevertUnpauseTransactions() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_UnpauseTransactions() public {}
+    function test_UnpauseTransactions() public { }
 
     /*//////////////////////////////////////////////////////////////
                          function contractURI()
@@ -256,7 +256,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ContractURI() public {}
+    function test_ContractURI() public { }
 
     /*//////////////////////////////////////////////////////////////
                     function getTokenStructByTokenId()
@@ -264,7 +264,7 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_GetTokenStructByTokenId() public {}
+    function test_GetTokenStructByTokenId() public { }
 
     /*//////////////////////////////////////////////////////////////
                             function tokenURI()
@@ -272,13 +272,13 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_MinuteNftTokenURI() public {}
+    function test_MinuteNftTokenURI() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_DayNftTokenURI() public {}
+    function test_DayNftTokenURI() public { }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_RarityNftTokenURI() public {}
+    function test_RarityNftTokenURI() public { }
 }

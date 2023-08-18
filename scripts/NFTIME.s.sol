@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.18;
 
-import {Script} from "@std/Script.sol";
-import {NFTIME} from "../src/NFTIME.sol";
-import {DateTime} from "../src/libraries/DateTime.sol";
+import { Script } from "@std/Script.sol";
+import { NFTIME } from "../src/NFTIME.sol";
+import { DateTime } from "../src/libraries/DateTime.sol";
 
 contract DeployScript is Script {
-    function setUp() public {}
+    function setUp() public { }
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");

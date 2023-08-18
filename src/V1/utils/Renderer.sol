@@ -81,7 +81,11 @@ contract Renderer {
         string memory width,
         string memory transformX,
         string memory transformY
-    ) internal pure returns (string memory) {
+    )
+        internal
+        pure
+        returns (string memory)
+    {
         return string.concat(
             '<foreignObject x="',
             transformX,
@@ -106,7 +110,11 @@ contract Renderer {
         return svg.path(string.concat(svg.prop("fill", "none"), svg.prop("stroke", stroke), svg.prop("d", d)), "");
     }
 
-    function getSVGClockPath(string memory d, uint256 rotation, uint256 product)
+    function getSVGClockPath(
+        string memory d,
+        uint256 rotation,
+        uint256 product
+    )
         internal
         pure
         returns (string memory)

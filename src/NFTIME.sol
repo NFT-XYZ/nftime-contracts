@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {Ownable} from "@oz/access/Ownable.sol";
-import {AccessControl} from "@oz/access/AccessControl.sol";
-import {Counters} from "@oz/utils/Counters.sol";
-import {ERC721} from "@oz/token/ERC721/ERC721.sol";
-import {ERC721URIStorage} from "@oz/token/ERC721/extensions/ERC721URIStorage.sol";
-import {ERC721Enumerable} from "@oz/token/ERC721/extensions/ERC721Enumerable.sol";
-import {ERC721Pausable} from "@oz/token/ERC721/extensions/ERC721Pausable.sol";
-import {ERC721Burnable} from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
-import {Base64} from "@oz/utils/Base64.sol";
-import {Strings} from "@oz/utils/Strings.sol";
+import { Ownable } from "@oz/access/Ownable.sol";
+import { AccessControl } from "@oz/access/AccessControl.sol";
+import { Counters } from "@oz/utils/Counters.sol";
+import { ERC721 } from "@oz/token/ERC721/ERC721.sol";
+import { ERC721URIStorage } from "@oz/token/ERC721/extensions/ERC721URIStorage.sol";
+import { ERC721Enumerable } from "@oz/token/ERC721/extensions/ERC721Enumerable.sol";
+import { ERC721Pausable } from "@oz/token/ERC721/extensions/ERC721Pausable.sol";
+import { ERC721Burnable } from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
+import { Base64 } from "@oz/utils/Base64.sol";
+import { Strings } from "@oz/utils/Strings.sol";
 
-import {Date, DateTime} from "./libraries/DateTime.sol";
-import {NFTIMEMetadata} from "./libraries/NFTIMEMetadata.sol";
+import { Date, DateTime } from "./libraries/DateTime.sol";
+import { NFTIMEMetadata } from "./libraries/NFTIMEMetadata.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -113,7 +113,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     //////////////////////////////////////////////////////////////*/
 
     /// @dev The received ETH stays in this contract address
-    receive() external payable {}
+    receive() external payable { }
 
     /// @notice Mint Regular NFTIME
     /// @param _time Timestamp for Token
@@ -142,7 +142,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
         _isMinute ? s_mintedDays[_dateString] = true : s_mintedMinutes[_dateString] = true;
 
-        s_tokens[_newItemId] = TokenStruct({timestamp: _time, rarity: false, nftType: _type});
+        s_tokens[_newItemId] = TokenStruct({ timestamp: _time, rarity: false, nftType: _type });
 
         return _newItemId;
     }
@@ -160,7 +160,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
         _mint(msg.sender, _newItemId);
 
-        s_tokens[_newItemId] = TokenStruct({timestamp: 0, rarity: true, nftType: Type.Rarity});
+        s_tokens[_newItemId] = TokenStruct({ timestamp: 0, rarity: true, nftType: Type.Rarity });
 
         _setTokenURI(_newItemId, _tokenUri);
 
@@ -169,7 +169,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @notice Withdraw collected funds
     function withdraw() external payable onlyRole(DEFAULT_ADMIN_ROLE) {
-        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
+        (bool success,) = payable(msg.sender).call{ value: address(this).balance }("");
         if (!success) {
             revert NFTIME__WithdrawError();
         }
@@ -257,7 +257,12 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     }
 
     /// @dev See {ERC721-_beforeTokenTransfer}.
-    function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    )
         internal
         override(ERC721, ERC721Enumerable, ERC721Pausable)
     {

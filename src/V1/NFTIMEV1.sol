@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {Ownable} from "@oz/access/Ownable.sol";
-import {AccessControl} from "@oz/access/AccessControl.sol";
-import {Counters} from "@oz/utils/Counters.sol";
-import {ERC721} from "@oz/token/ERC721/ERC721.sol";
-import {ERC721URIStorage} from "@oz/token/ERC721/extensions/ERC721URIStorage.sol";
-import {ERC721Enumerable} from "@oz/token/ERC721/extensions/ERC721Enumerable.sol";
-import {ERC721Pausable} from "@oz/token/ERC721/extensions/ERC721Pausable.sol";
-import {ERC721Burnable} from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
-import {Base64} from "@oz/utils/Base64.sol";
-import {Strings} from "@oz/utils/Strings.sol";
+import { Ownable } from "@oz/access/Ownable.sol";
+import { AccessControl } from "@oz/access/AccessControl.sol";
+import { Counters } from "@oz/utils/Counters.sol";
+import { ERC721 } from "@oz/token/ERC721/ERC721.sol";
+import { ERC721URIStorage } from "@oz/token/ERC721/extensions/ERC721URIStorage.sol";
+import { ERC721Enumerable } from "@oz/token/ERC721/extensions/ERC721Enumerable.sol";
+import { ERC721Pausable } from "@oz/token/ERC721/extensions/ERC721Pausable.sol";
+import { ERC721Burnable } from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
+import { Base64 } from "@oz/utils/Base64.sol";
+import { Strings } from "@oz/utils/Strings.sol";
 
-import {Date, DateTime} from "./utils/DateTime.sol";
-import {Renderer} from "./utils/Renderer.sol";
+import { Date, DateTime } from "./utils/DateTime.sol";
+import { Renderer } from "./utils/Renderer.sol";
 
 /**
  * c00l         ,k0d.  c0000000000000000d.  c000000000000000d.
@@ -107,7 +107,11 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Mint Rarity NFTIME
     /// @param _tokenUri TokenURI to special rarity NFTIME
-    function rarityMint(string memory _tokenUri, string memory name, Date memory date)
+    function rarityMint(
+        string memory _tokenUri,
+        string memory name,
+        Date memory date
+    )
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
         whenNotPaused
@@ -158,7 +162,11 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @dev Render the JSON Metadata for a given rarity NFTIME.
     /// @param _tokenId The id of the token to render.
     /// @param _ipfsURI Custom ipfs uri.
-    function _rarityTokenURI(uint256 _tokenId, string memory _ipfsURI, string memory _name)
+    function _rarityTokenURI(
+        uint256 _tokenId,
+        string memory _ipfsURI,
+        string memory _name
+    )
         public
         view
         returns (string memory)
@@ -254,7 +262,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Withdraw collected Funds
     function withdraw() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
-        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
+        (bool success,) = payable(msg.sender).call{ value: address(this).balance }("");
         require(success, "Unable to withdraw");
     }
 
@@ -269,7 +277,12 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         return super.tokenURI(_tokenId);
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    )
         internal
         override(ERC721, ERC721Enumerable, ERC721Pausable)
     {

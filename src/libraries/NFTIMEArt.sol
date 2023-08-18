@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {Strings} from "@oz/utils/Strings.sol";
+import { Strings } from "@oz/utils/Strings.sol";
 
-import {Date} from "./DateTime.sol";
+import { Date } from "./DateTime.sol";
 
 ///
 /// ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗               █████╗ ██████╗ ████████╗
@@ -131,7 +131,11 @@ library NFTIMEArt {
         string memory _width,
         string memory _fontSize,
         string memory _value
-    ) internal pure returns (string memory) {
+    )
+        internal
+        pure
+        returns (string memory)
+    {
         return string.concat(
             '<foreignObject x="',
             _x,

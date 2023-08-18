@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {Ownable} from "@oz/access/Ownable.sol";
-import {AccessControl} from "@oz/access/AccessControl.sol";
-import {Counters} from "@oz/utils/Counters.sol";
-import {ERC721} from "@oz/token/ERC721/ERC721.sol";
-import {ERC721URIStorage} from "@oz/token/ERC721/extensions/ERC721URIStorage.sol";
-import {ERC721Enumerable} from "@oz/token/ERC721/extensions/ERC721Enumerable.sol";
-import {ERC721Pausable} from "@oz/token/ERC721/extensions/ERC721Pausable.sol";
-import {ERC721Burnable} from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
+import { Ownable } from "@oz/access/Ownable.sol";
+import { AccessControl } from "@oz/access/AccessControl.sol";
+import { Counters } from "@oz/utils/Counters.sol";
+import { ERC721 } from "@oz/token/ERC721/ERC721.sol";
+import { ERC721URIStorage } from "@oz/token/ERC721/extensions/ERC721URIStorage.sol";
+import { ERC721Enumerable } from "@oz/token/ERC721/extensions/ERC721Enumerable.sol";
+import { ERC721Pausable } from "@oz/token/ERC721/extensions/ERC721Pausable.sol";
+import { ERC721Burnable } from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
 
-import {Date, DateTime} from "./libraries/DateTime.sol";
+import { Date, DateTime } from "./libraries/DateTime.sol";
 
 ///
 ///  ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗
@@ -99,7 +99,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     //////////////////////////////////////////////////////////////*/
 
     /// @dev The received ETH stays in this contract address
-    receive() external payable {}
+    receive() external payable { }
 
     /// @dev Mint Regular NFTIME
     /// @param _time Timestamp for minted NFTIME
@@ -149,7 +149,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @dev Withdraw collected Funds
     function withdraw() external payable onlyRole(DEFAULT_ADMIN_ROLE) {
-        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
+        (bool success,) = payable(msg.sender).call{ value: address(this).balance }("");
         if (!success) {
             revert NFTIME__WithdrawError();
         }
@@ -218,7 +218,12 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @param to Recipient's Address
     /// @param firstTokenId Token ID
     /// @param batchSize Size of Batch
-    function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    )
         internal
         override(ERC721, ERC721Enumerable, ERC721Pausable)
     {

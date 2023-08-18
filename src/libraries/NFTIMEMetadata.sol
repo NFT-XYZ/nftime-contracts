@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {Strings} from "@oz/utils/Strings.sol";
-import {Base64} from "@oz/utils/Base64.sol";
+import { Strings } from "@oz/utils/Strings.sol";
+import { Base64 } from "@oz/utils/Base64.sol";
 
-import {NFTIMEArt} from "./NFTIMEArt.sol";
-import {Date, DateTime} from "./DateTime.sol";
+import { NFTIMEArt } from "./NFTIMEArt.sol";
+import { Date, DateTime } from "./DateTime.sol";
 
 ///
 /// ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗              ███╗   ███╗███████╗████████╗ █████╗ ██████╗  █████╗ ████████╗ █████╗
@@ -77,7 +77,11 @@ library NFTIMEMetadata {
     /// @param traitType The `trait_type` for this trait.
     /// @param traitValue The `value` for this trait.
     /// @param append Helper to append a comma.
-    function _getTrait(string memory traitType, string memory traitValue, string memory append)
+    function _getTrait(
+        string memory traitType,
+        string memory traitValue,
+        string memory append
+    )
         internal
         pure
         returns (string memory)
