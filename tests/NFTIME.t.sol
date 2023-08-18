@@ -261,11 +261,22 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertUpdateContractUri() public { }
+    function test_ShouldRevertUpdateContractUri() public {
+        vm.prank(SENDER_ADDRESS);
+        vm.expectRevert(getAccessControlRevertMessage(SENDER_ADDRESS, DEFAULT_ADMIN_ROLE));
+        s_nftime.updateContractUri("");
+    }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_UpdateContractUri() public { }
+    function test_UpdateContractUri() public {
+        string memory _newContractUri = "contracturi";
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_nftime.updateContractUri(_newContractUri);
+
+        assertEq(s_nftime.getContractURI(), _newContractUri);
+    }
 
     /*//////////////////////////////////////////////////////////////
                        function updateNftMetadata()

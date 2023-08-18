@@ -207,7 +207,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
     /// @notice IPFS Link to Opensea Collection Metadata.
     /// @return Returns contractUri
-    function contractURI() external view returns (string memory) {
+    function getContractURI() external view returns (string memory) {
         return s_contractUri;
     }
 
