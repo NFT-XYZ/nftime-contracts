@@ -284,11 +284,23 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertPauseTransactions() public { }
+    function test_ShouldRevertPauseTransactions() public {
+        vm.prank(SENDER_ADDRESS);
+        vm.expectRevert(getAccessControlRevertMessage(SENDER_ADDRESS, DEFAULT_ADMIN_ROLE));
+        s_nftime.pauseTransactions();
+    }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_PauseTransactions() public { }
+    function test_PauseTransactions() public {
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_nftime.pauseTransactions();
+
+        vm.expectRevert("Pausable: paused");
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+    }
 
     /*//////////////////////////////////////////////////////////////
                     function resumeTransactions()
@@ -296,11 +308,27 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ShouldRevertUnpauseTransactions() public { }
+    function test_ShouldRevertUnpauseTransactions() public {
+        vm.prank(SENDER_ADDRESS);
+        vm.expectRevert(getAccessControlRevertMessage(SENDER_ADDRESS, DEFAULT_ADMIN_ROLE));
+        s_nftime.resumeTransactions();
+    }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_UnpauseTransactions() public { }
+    function test_UnpauseTransactions() public {
+        // s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+
+        // vm.prank(DEFAULT_ADMIN_ADDRESS);
+        // s_nftime.pauseTransactions();
+
+        // vm.expectRevert("Pausable: paused");
+        // s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP + 3600, NFTIME.Type.Day);
+
+        // vm.prank(DEFAULT_ADMIN_ADDRESS);
+        // s_nftime.resumeTransactions();
+        // s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP + 7200, NFTIME.Type.Day);
+    }
 
     /*//////////////////////////////////////////////////////////////
                     function contractURI()
