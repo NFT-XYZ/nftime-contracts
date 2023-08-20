@@ -3,6 +3,8 @@ pragma solidity ^0.8.18;
 
 import { Test } from "@std/Test.sol";
 import { console } from "@std/console.sol";
+import { Strings } from "@oz/utils/Strings.sol";
+
 import { NFTIME } from "../src/NFTIME.sol";
 
 import { Constants } from "../helpers/Constants.sol";
@@ -37,6 +39,17 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     NFTIME private s_nftime;
+
+    /*//////////////////////////////////////////////////////////////
+                                STRUCTS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Copy of NFTIME
+    struct TokenStruct {
+        uint256 timestamp;
+        bool rarity;
+        NFTIME.Type nftType;
+    }
 
     /*//////////////////////////////////////////////////////////////
                              MODIFIERS
@@ -317,17 +330,17 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
     function test_UnpauseTransactions() public {
-        // s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
 
-        // vm.prank(DEFAULT_ADMIN_ADDRESS);
-        // s_nftime.pauseTransactions();
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_nftime.pauseTransactions();
 
-        // vm.expectRevert("Pausable: paused");
-        // s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP + 3600, NFTIME.Type.Day);
+        vm.expectRevert("Pausable: paused");
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
 
-        // vm.prank(DEFAULT_ADMIN_ADDRESS);
-        // s_nftime.resumeTransactions();
-        // s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP + 7200, NFTIME.Type.Day);
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        s_nftime.resumeTransactions();
+        s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP + 86_400, NFTIME.Type.Day);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -336,7 +349,9 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_ContractURI() public { }
+    function test_ContractURI() public {
+        assertFalse(Strings.equal(s_nftime.getContractURI(), string(abi.encodePacked(""))));
+    }
 
     /*//////////////////////////////////////////////////////////////
                 function getTokenStructByTokenId()
@@ -344,7 +359,15 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_GetTokenStructByTokenId() public { }
+    function test_GetTokenStructByTokenId() public {
+        uint256 _tokenId = s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+
+        NFTIME.TokenStruct memory _tokenStruct = s_nftime.getTokenStructByTokenId(_tokenId);
+
+        assertEq(_tokenStruct.timestamp, TIMESTAMP);
+        assertEq(_tokenStruct.rarity, false);
+        assertEq(uint256(_tokenStruct.nftType), uint256(NFTIME.Type.Day));
+    }
 
     /*//////////////////////////////////////////////////////////////
                         function tokenURI()
@@ -352,13 +375,28 @@ contract NFTIMETest is Test, AccessControlHelper, Constants {
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_MinuteNftTokenURI() public { }
+    function test_MinuteNftTokenURI() public {
+        uint256 _tokenId = s_nftime.mint{ value: NFTIME_MINUTE_PRICE }(TIMESTAMP, NFTIME.Type.Minute);
+
+        assertFalse(Strings.equal(s_nftime.tokenURI(_tokenId), string(abi.encodePacked(""))));
+    }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_DayNftTokenURI() public { }
+    function test_DayNftTokenURI() public {
+        uint256 _tokenId = s_nftime.mint{ value: NFTIME_DAY_PRICE }(TIMESTAMP, NFTIME.Type.Day);
+
+        assertFalse(Strings.equal(s_nftime.tokenURI(_tokenId), string(abi.encodePacked(""))));
+    }
 
     /// @notice Explain to an end user what this does
     /// @dev Explain to a developer any extra details
-    function test_RarityNftTokenURI() public { }
+    function test_RarityNftTokenURI() public {
+        string memory _rarityTokenUri = "https://rarity.nftime.site";
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        uint256 _tokenId = s_nftime.mintRarity(_rarityTokenUri);
+
+        assertEq(s_nftime.tokenURI(_tokenId), _rarityTokenUri);
+    }
 }
