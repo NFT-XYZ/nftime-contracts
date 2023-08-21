@@ -4,7 +4,7 @@
 
 Consolidate `.env.local` fill out `.env`
 
-## Deployed Contracts (Legacy)
+## Deployed Contracts (V1)
 
 | Contract   | Network | Contract address                           |
 | ---------- | ------- | ------------------------------------------ |
@@ -16,9 +16,12 @@ Consolidate `.env.local` fill out `.env`
 
 ## Deployed Contracts
 
-| Contract | Network | Contract address                           |
-| -------- | ------- | ------------------------------------------ |
-| NFTIME   | goerli  | 0x950ff76f6f7b73f393bdfa39e631e226007740db |
+| Contract       | Network | Contract address                           |
+| -------------- | ------- | ------------------------------------------ |
+| NFTIME         | goerli  | 0xa088A23a047D78F248c5244137fFfe41f4dBD850 |
+| NFTIMEMetadata | goerli  | 0x86a61E2e9Fe71c8914822c15d8f19c0F630EE0D8 |
+| NFTIMEArt      | goerli  | 0x4c91822B3BacB19B86784f6938Be85d2452A675b |
+| DateTime       | goerli  | 0xAc433b96705ee8627962eb398B22dAd77ece8118 |
 
 ### Deploy contracts
 
