@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import { Strings } from "@oz/utils/Strings.sol";
 
-import { Date } from "./DateTime.sol";
+import { NFTIME } from "../NFTIME.sol";
 
 ///
 /// ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗               █████╗ ██████╗ ████████╗
@@ -57,10 +57,10 @@ library NFTIMEArt {
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Generate the complete SVG code for a given Token.
-    /// @param _date Token's Date Struct.
+    /// @param _date Token's NFTIME.Date Struct.
     /// @param _isMinute bool.
     /// @return Returns base64 encoded svg file.
-    function generateSVG(Date memory _date, bool _isMinute) public pure returns (bytes memory) {
+    function generateSVG(NFTIME.Date memory _date, bool _isMinute) public pure returns (bytes memory) {
         /// forgefmt: disable-start
         return abi.encodePacked(
             '<svg ',
@@ -81,9 +81,9 @@ library NFTIMEArt {
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Generate SVG Content of Minute NFT
-    /// @param _date Token's Date Struct.
+    /// @param _date Token's NFTIME.Date Struct.
     /// @return Returns base64 encoded svg file.
-    function _generateMinuteContent(Date memory _date) internal pure returns (string memory) {
+    function _generateMinuteContent(NFTIME.Date memory _date) internal pure returns (string memory) {
         return string.concat(
             _fillDateAttributes(_date, true),
             _generateClock(_date),
@@ -95,24 +95,24 @@ library NFTIMEArt {
     }
 
     /// @dev Generate SVG Content of Day NFT
-    /// @param _date Token's Date Struct.
+    /// @param _date Token's NFTIME.Date Struct.
     /// @return Returns base64 encoded svg file.
-    function _generateDayContent(Date memory _date) internal pure returns (string memory) {
+    function _generateDayContent(NFTIME.Date memory _date) internal pure returns (string memory) {
         return string.concat(
             '<g transform="translate(0.4 240.4)">', _fillDateAttributes(_date, false), PATHS_DAY_NFT, "</g>"
         );
     }
 
     /// @dev Generate SVG NFT Attributes
-    /// @param _date Token's Date Struct.
+    /// @param _date Token's NFTIME.Date Struct.
     /// @param _isMinute bool.
     /// @return Returns concated attributes.
-    function _fillDateAttributes(Date memory _date, bool _isMinute) internal pure returns (string memory) {
+    function _fillDateAttributes(NFTIME.Date memory _date, bool _isMinute) internal pure returns (string memory) {
         return string.concat(
             _isMinute ? _fillDateAttribute("520", "520", "200", "200", "142", _date.hour) : "",
             _isMinute ? _fillDateAttribute("760", "520", "200", "200", "142", _date.minute) : "",
             _isMinute ? _fillDateAttribute("520", "760", "200", "440", "138", _date.dayOfWeek) : "",
-            _fillDateAttribute("520", "40", "200", "440", "142", Strings.toString(_date.year)),
+            _fillDateAttribute("520", "40", "200", "440", "142", _date.year),
             _fillDateAttribute("520", "280", "200", "440", "142", _date.month),
             _fillDateAttribute("40", "40", "440", "440", "360", _date.day),
             _isMinute ? _fillDateAttribute("330", "730", "20", "20", "11", _date.day) : ""
@@ -159,8 +159,8 @@ library NFTIMEArt {
     }
 
     /// @dev Generate SVG NFT Clock
-    /// @param _date Token's Date Struct.
-    function _generateClock(Date memory _date) internal pure returns (string memory) {
+    /// @param _date Token's NFTIME.Date Struct.
+    function _generateClock(NFTIME.Date memory _date) internal pure returns (string memory) {
         return string.concat(
             '<g transform="translate(60, 540)">',
             '<svg width="400" height="400" viewBox="0 0 566 566">',
@@ -187,8 +187,8 @@ library NFTIMEArt {
     }
 
     /// @dev Calculate rotation for hour hand
-    /// @param _date Date object.
-    function _computeHourRotation(Date memory _date) internal pure returns (string memory) {
+    /// @param _date NFTIME.Date object.
+    function _computeHourRotation(NFTIME.Date memory _date) internal pure returns (string memory) {
         uint256 _factor = 10 ** 3;
         uint256 _denominator = 60;
         uint256 _hourRotation = 30;

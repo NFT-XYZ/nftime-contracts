@@ -12,7 +12,6 @@ import { ERC721Burnable } from "@oz/token/ERC721/extensions/ERC721Burnable.sol";
 import { Base64 } from "@oz/utils/Base64.sol";
 import { Strings } from "@oz/utils/Strings.sol";
 
-import { Date, DateTime } from "./libraries/DateTime.sol";
 import { NFTIMEMetadata } from "./libraries/NFTIMEMetadata.sol";
 
 ///
@@ -58,12 +57,24 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
                                 STRUCTS
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev Struct for all necessary Date-Attributes
+    struct Date {
+        string year;
+        string month;
+        string day;
+        string dayOfWeek;
+        string hour;
+        uint256 hourUint;
+        string minute;
+        uint256 minuteUint;
+    }
+
     /// @dev Struct that contains vital information
     ///      timestamp: Minted Timestamp
     ///      rarity: Token rarity
     ///      nftType: Token Type (Minute, Day or Rarity)
     struct TokenStruct {
-        uint256 timestamp;
+        Date time;
         bool rarity;
         Type nftType;
     }
@@ -119,7 +130,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
     /// @param _time Timestamp for Token
     /// @param _type Type for Token (Minute or Day)
     /// @return Returns new tokenId
-    function mint(uint256 _time, Type _type) external payable whenNotPaused returns (uint256) {
+    function mint(Date memory _time, Type _type) external payable whenNotPaused returns (uint256) {
         bool _isMinute = _type == Type.Minute;
 
         uint256 _price = _isMinute ? NFTIME_MINUTE_PRICE : NFTIME_DAY_PRICE;
@@ -131,8 +142,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         s_tokenIds.increment();
         uint256 _newItemId = s_tokenIds.current();
 
-        Date memory _date = DateTime.timestampToDateTime(_time);
-        string memory _dateString = DateTime.formatDate(_date, _isMinute);
+        string memory _dateString = _isMinute
+            ? string.concat(_time.day, _time.month, _time.year, ":", _time.hour, _time.minute)
+            : string.concat(_time.day, _time.month, _time.year);
 
         if (s_mintedMinutes[_dateString] == true || s_mintedDays[_dateString] == true) {
             revert NFTIME__TimeAlreadyMinted();
@@ -142,7 +154,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
         _isMinute ? s_mintedDays[_dateString] = true : s_mintedMinutes[_dateString] = true;
 
-        s_tokens[_newItemId] = TokenStruct({ timestamp: _time, rarity: false, nftType: _type });
+        //s_tokens[_newItemId] = TokenStruct({ timestamp: _time, rarity: false, nftType: _type });
+        s_tokens[_newItemId] = TokenStruct({ time: _time, rarity: false, nftType: _type });
 
         return _newItemId;
     }
@@ -160,7 +173,8 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
 
         _mint(msg.sender, _newItemId);
 
-        s_tokens[_newItemId] = TokenStruct({ timestamp: 0, rarity: true, nftType: Type.Rarity });
+        s_tokens[_newItemId] =
+            TokenStruct({ time: Date("", "", "", "", "", 0, "", 0), rarity: true, nftType: Type.Rarity });
 
         _setTokenURI(_newItemId, _tokenUri);
 
@@ -231,9 +245,9 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         TokenStruct memory _tokenStruct = getTokenStructByTokenId(_tokenId);
 
         if (!_tokenStruct.rarity) {
-            Date memory _date = DateTime.timestampToDateTime(_tokenStruct.timestamp);
+            //Date memory _date = DateTime.timestampToDateTime(_tokenStruct.timestamp);
 
-            return NFTIMEMetadata.generateTokenURI(_date, _tokenStruct.nftType == Type.Minute);
+            return NFTIMEMetadata.generateTokenURI(_tokenStruct.time, _tokenStruct.nftType == Type.Minute);
         } else {
             return super.tokenURI(_tokenId);
         }

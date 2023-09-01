@@ -5,7 +5,7 @@ import { Strings } from "@oz/utils/Strings.sol";
 import { Base64 } from "@oz/utils/Base64.sol";
 
 import { NFTIMEArt } from "./NFTIMEArt.sol";
-import { Date, DateTime } from "./DateTime.sol";
+import { NFTIME } from "../NFTIME.sol";
 
 ///
 /// ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗              ███╗   ███╗███████╗████████╗ █████╗ ██████╗  █████╗ ████████╗ █████╗
@@ -25,11 +25,13 @@ library NFTIMEMetadata {
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Render the JSON Metadata for a given token.
-    /// @param _date Token's Date Struct.
+    /// @param _date Token's NFTIME.Date Struct.
     /// @return Returns base64 encoded metadata file.
-    function generateTokenURI(Date memory _date, bool _isMinute) public pure returns (string memory) {
+    function generateTokenURI(NFTIME.Date memory _date, bool _isMinute) public pure returns (string memory) {
         bytes memory _svg = NFTIMEArt.generateSVG(_date, _isMinute);
-        string memory _name = DateTime.formatDate(_date, _isMinute);
+        string memory _name = _isMinute
+            ? string.concat(_date.day, " ", _date.month, " ", _date.year, " ", _date.hour, ":", _date.minute)
+            : string.concat(_date.day, " ", _date.month, " ", _date.year);
 
         /// forgefmt: disable-start
         bytes memory _metadata = abi.encodePacked(
@@ -57,12 +59,12 @@ library NFTIMEMetadata {
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Generate all Attributes
-    /// @param _date Token's Date Struct.
+    /// @param _date Token's NFTIME.Date Struct.
     /// @param _isMinute bool.
     /// @return Returns base64 encoded attributes.
-    function _getAttributes(Date memory _date, bool _isMinute) internal pure returns (bytes memory) {
+    function _getAttributes(NFTIME.Date memory _date, bool _isMinute) internal pure returns (bytes memory) {
         return abi.encodePacked(
-            _getTrait("Year", Strings.toString(_date.year), ","),
+            _getTrait("Year", _date.year, ","),
             _getTrait("Month", _date.month, ","),
             _getTrait("Day", _date.day, ","),
             _getTrait("Type", _isMinute ? "MINUTE" : "DAY", ","),

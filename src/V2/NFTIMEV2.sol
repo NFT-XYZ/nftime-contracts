@@ -115,7 +115,7 @@ contract NFTIME is Ownable, AccessControl, ERC721URIStorage, ERC721Enumerable, E
         uint256 newItemId = s_tokenIds.current();
 
         Date memory ts = DateTime.timestampToDateTime(_time);
-        string memory date = DateTime.formatDate(ts);
+        string memory date = DateTime.formatDate(ts, false);
 
         if (s_mintedMinutes[date] == true || s_mintedDays[date] == true) {
             revert NFTIME__TimeAlreadyMinted();
