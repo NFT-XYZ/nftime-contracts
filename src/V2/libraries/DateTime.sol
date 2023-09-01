@@ -6,6 +6,7 @@ pragma solidity ^0.8.18;
 
 import { Strings } from "@oz/utils/Strings.sol";
 
+/// @dev Struct for all necessary Date-Attributes
 struct Date {
     uint256 year;
     string month;
@@ -17,8 +18,23 @@ struct Date {
     uint256 minuteUint;
 }
 
-// TODO Comments
+///
+/// ███╗   ██╗███████╗████████╗██╗███╗   ███╗███████╗              ██████╗  █████╗ ████████╗███████╗████████╗██╗███╗   ███╗███████╗
+/// ████╗  ██║██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝              ██╔══██╗██╔══██╗╚══██╔══╝██╔════╝╚══██╔══╝██║████╗ ████║██╔════╝
+/// ██╔██╗ ██║█████╗     ██║   ██║██╔████╔██║█████╗      █████╗    ██║  ██║███████║   ██║   █████╗     ██║   ██║██╔████╔██║█████╗
+/// ██║╚██╗██║██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝      ╚════╝    ██║  ██║██╔══██║   ██║   ██╔══╝     ██║   ██║██║╚██╔╝██║██╔══╝
+/// ██║ ╚████║██║        ██║   ██║██║ ╚═╝ ██║███████╗              ██████╔╝██║  ██║   ██║   ███████╗   ██║   ██║██║ ╚═╝ ██║███████╗
+/// ╚═╝  ╚═══╝╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝              ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝   ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝
+///
+/// @title DateTime
+/// @author https://nftxyz.art/ (Olivier Winkler)
+/// @notice DateTime Library
+/// @custom:security-contact abc@nftxyz.art
 library DateTime {
+    /*//////////////////////////////////////////////////////////////
+                                CONSTANTS
+    //////////////////////////////////////////////////////////////*/
+
     uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
     uint256 private constant SECONDS_PER_HOUR = 60 * 60;
     uint256 private constant SECONDS_PER_MINUTE = 60;
@@ -45,6 +61,13 @@ library DateTime {
     string private constant MONTH_NOV = "NOV";
     string private constant MONTH_DEC = "DEC";
 
+    /*//////////////////////////////////////////////////////////////
+                                PUBLIC
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice Convert Timestamp into Date Struct
+    /// @param _timestamp UNIX Timestamp
+    /// @return Returns Date Struct
     function timestampToDateTime(uint256 _timestamp) public pure returns (Date memory) {
         (uint256 _year, string memory _month, string memory _day) = _daysToDate(_timestamp / SECONDS_PER_DAY);
         uint256 _secs = _timestamp % SECONDS_PER_DAY;
@@ -59,12 +82,29 @@ library DateTime {
         return Date(_year, _month, _day, _dayOfWeek, _hour, _hourUint, _minute, _minuteUint);
     }
 
-    function formatDate(Date memory _date) public pure returns (string memory) {
-        return string.concat(
-            _date.day, " ", _date.month, " ", Strings.toString(_date.year), " ", _date.hour, ":", _date.minute
-        );
+    /// @notice Return concatenated string
+    /// @param _date Date Struct
+    /// @param _isMinute Is NFT a Minute
+    /// @return Returns formatted string
+    function formatDate(Date memory _date, bool _isMinute) public pure returns (string memory) {
+        string memory _name = string.concat(_date.day, " ", _date.month, " ", Strings.toString(_date.year));
+
+        if (_isMinute) {
+            _name = string.concat(_name, " ", _date.hour, ":", _date.minute);
+        }
+
+        return _name;
     }
 
+    /*//////////////////////////////////////////////////////////////
+                                INTERNAL
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Calcuate Days
+    /// @param _days UNIX Timestamp
+    /// @return year
+    /// @return month
+    /// @return day
     function _daysToDate(uint256 _days) internal pure returns (uint256 year, string memory month, string memory day) {
         int256 __days = int256(_days);
 
@@ -84,11 +124,17 @@ library DateTime {
         day = _formatOctalNumbers(uint256(_day));
     }
 
+    /// @dev Convert 1 to 01
+    /// @param _number Number
+    /// @return temp Number as Octal
     function _formatOctalNumbers(uint256 _number) internal pure returns (string memory temp) {
         temp = Strings.toString(_number);
         if (_number < 10) temp = string.concat("0", temp);
     }
 
+    /// @dev Return correct Weekday based on number
+    /// @param _timestamp UNIX Timestamp
+    /// @return Return string
     function _getDayOfWeek(uint256 _timestamp) internal pure returns (string memory) {
         uint256 _days = _timestamp / SECONDS_PER_DAY;
         uint256 dayOfWeek = ((_days + 3) % 7) + 1;
@@ -104,6 +150,9 @@ library DateTime {
         return "";
     }
 
+    /// @dev Return correct Month based on number
+    /// @param _month UNIX Timestamp
+    /// @return month Return string
     function _getMonthByNumber(uint256 _month) internal pure returns (string memory month) {
         if (_month == 1) return MONTH_JAN;
         if (_month == 2) return MONTH_FEB;
