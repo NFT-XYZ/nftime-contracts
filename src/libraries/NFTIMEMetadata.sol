@@ -39,7 +39,7 @@ library NFTIMEMetadata {
                 '"name": "',
                 _name,
                 '",',
-                '"description": "Collect your favourite Time. Set your time. Mint your minute!.",',
+                '"description": "Collect your NFTIME. Mint your day. Mint your minute.",',
                 '"image": ',
                     '"data:image/svg+xml;base64,',
                     Base64.encode(_svg),
