@@ -18,10 +18,15 @@ Consolidate `.env.local` fill out `.env`
 
 | Contract       | Network | Contract address                           |
 | -------------- | ------- | ------------------------------------------ |
-| NFTIME         | goerli  | 0xa088A23a047D78F248c5244137fFfe41f4dBD850 |
-| NFTIMEMetadata | goerli  | 0x86a61E2e9Fe71c8914822c15d8f19c0F630EE0D8 |
-| NFTIMEArt      | goerli  | 0x4c91822B3BacB19B86784f6938Be85d2452A675b |
-| DateTime       | goerli  | 0xAc433b96705ee8627962eb398B22dAd77ece8118 |
+| NFTIME         | goerli  | 0x4f31199D088e3781bACe408541fdfb7B585Ff83B |
+| NFTIMEMetadata | goerli  | 0x8E071387198BD397bB6751bEF81c46F29F16b522 |
+| NFTIMEArt      | goerli  | 0xC5DCfc82898A1a95503ce997912fD646cd58d682 |
+
+| Contract       | Network | Contract address                           |
+| -------------- | ------- | ------------------------------------------ |
+| NFTIME         | mainnet  | 0x9c43d75c8395723e7151eb818bb1c17ce5b08f93 |
+| NFTIMEMetadata | mainnet  | 0xd8777782919f3f103d8e1Ce5B5b2251729fD7AdC |
+| NFTIMEArt      | mainnet  | 0x033fb5ba2b0a3c615a187f106d1f7ec30ed47c6e |
 
 ### Deploy contracts
 
