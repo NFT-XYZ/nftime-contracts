@@ -24,9 +24,9 @@ Consolidate `.env.local` fill out `.env`
 
 | Contract       | Network | Contract address                           |
 | -------------- | ------- | ------------------------------------------ |
-| NFTIME         | mainnet  | 0x9c43d75c8395723e7151eb818bb1c17ce5b08f93 |
-| NFTIMEMetadata | mainnet  | 0xd8777782919f3f103d8e1Ce5B5b2251729fD7AdC |
-| NFTIMEArt      | mainnet  | 0x033fb5ba2b0a3c615a187f106d1f7ec30ed47c6e |
+| NFTIME         | mainnet  | 0x19e43efda0c02ea7049a6be91b49ef1ad1bc1a1d |
+| NFTIMEMetadata | mainnet  | 0x0fd5c9544ca451c69a4ce300390ebb6ec1882a58 |
+| NFTIMEArt      | mainnet  | 0xc96d610af9ac71a018c5be041188003b45e95447 |
 
 ### Deploy contracts
 
